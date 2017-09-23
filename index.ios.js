@@ -11,9 +11,55 @@ import {
   Text,
   View,
   NavigatorIOS,
-  TouchableHighlight,
-  StatusBar
+  TouchableHighlight
 } from 'react-native';
+
+import Camera from 'react-native-camera';
+
+class BadInstagramCloneApp extends Component {
+  render() {
+    return (
+      <View style={cameraStyles.container}>
+        <Camera
+          ref={(cam) => {
+            this.camera = cam;
+          }}
+          style={cameraStyles.preview}
+          aspect={Camera.constants.Aspect.fill}>
+          <Text style={cameraStyles.capture} onPress={this.takePicture.bind(this)}>[CAPTURE]</Text>
+        </Camera>
+      </View>
+    );
+  }
+
+  takePicture() {
+    const options = {};
+    //options.location = ...
+    this.camera.capture({metadata: options})
+      .then((data) => console.log(data))
+      .catch(err => console.error(err));
+  }
+}
+
+const cameraStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  preview: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center'
+  },
+  capture: {
+    flex: 0,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    color: '#000',
+    padding: 10,
+    margin: 40
+  }
+});
 
 class MyView extends Component {
   _handleBackPress() {
@@ -26,12 +72,12 @@ class MyView extends Component {
 
   render() {
     const nextRoute = {
-      component: MyView,
+      component: BadInstagramCloneApp,
       title: 'Bar That',
       passProps: { myProp: 'bar' }
     };
     return(
-      <TouchableHighlight>
+      <TouchableHighlight onPress={() => this._handleNextPress(nextRoute)}>
         <Text style={{marginTop: 200, alignSelf: 'center'}}>
           See you on the other nav {this.props.myProp}!
         </Text>
@@ -41,40 +87,18 @@ class MyView extends Component {
 }
 
 export default class TaggingTracker extends Component {
-  _handleNavigationRequest() {
-    this.refs.nav.push({
-      component: MyView,
-      title: 'Tagging Tracker',
-      passProps: { myProp: 'genius' },
-    });
-  }
-
   render() {
     return (
-      <View>
-        <StatusBar
-          backgroundColor="black"
-          barStyle="light-content"
-        />
-        <NavigatorIOS
-          ref='nav'
-          initialRoute={{
-            component: MyView,
-            title: 'Tagging Track',
-            passProps: { myProp: 'foo' },
-            rightButtonTitle: '+',
-            onRightButtonPress: () => this._handleNavigationRequest(),
-          }}
-          styles={styles}
-          barTintColor='#000000'
-          titleTextColor='#fff'
-          tintColor='#fff'
-        />
-      </View>
+      <NavigatorIOS
+        initialRoute={{
+          component: MyView,
+          title: 'My Initial Scene',
+        }}
+        style={{flex: 1}}
+      />
     );
   }
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -93,5 +117,4 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 });
-
 AppRegistry.registerComponent('TaggingTracker', () => TaggingTracker);
