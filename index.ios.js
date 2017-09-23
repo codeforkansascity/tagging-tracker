@@ -18,7 +18,7 @@ export default class TaggingTracker extends Component {
       <View style={styles.container}>
         <Text style={styles.welcome}>
           Welcome to React Native!
-          This is Jake LaCombe's react native app!
+          This is Jake LaCombe's react native app! This is testing the code!
         </Text>
         <Text style={styles.instructions}>
           To get started, edit index.ios.js
