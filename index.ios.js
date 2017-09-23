@@ -60,9 +60,9 @@ export default class TaggingTracker extends Component {
           ref='nav'
           initialRoute={{
             component: MyView,
-            title: 'Tagging Tracker',
+            title: 'Tagging Track',
             passProps: { myProp: 'foo' },
-            rightButtonTitle: 'Add',
+            rightButtonTitle: '+',
             onRightButtonPress: () => this._handleNavigationRequest(),
           }}
           styles={styles}
