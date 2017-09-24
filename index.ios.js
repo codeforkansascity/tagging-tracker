@@ -14,7 +14,7 @@ import {
   TouchableHighlight,
   StatusBar,
   TabBarIOS,
-  TextInput
+  TextInput,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -28,8 +28,7 @@ export default class TaggingTracker extends Component {
         <NavigatorIOS
           initialRoute={{
             component: BaseView,
-            title: 'Current Tags',
-            statusBarHidden: true,
+            title: 'Current Tags'
           }}
           style={{flex: 1}}
           barTintColor="#000000"

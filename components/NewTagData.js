@@ -10,7 +10,8 @@ import {
   TabBarIOS,
   TextInput,
   Image,
-  Dimensions
+  Dimensions,
+  TabBarIOSItem
 } from 'react-native';
 
 import Camera from 'react-native-camera';
@@ -63,15 +64,12 @@ export default class NewTagData extends Component {
           unselectedTintColor="yellow"
           tintColor="white"
           barTintColor="black">
-         <Icon.TabBarItemIOS
-            iconName="ios-camera"
+         <TabBarIOS.Item
+            iconName=""
             badge={this.state.notifCount > 0 ? this.state.notifCount : undefined}
-            selected={this.state.selectedTab === 'redTab'}
-            onPress={() => {
-              this._handleNextPress(nextRoute);
-            }}>
+            selected={this.state.selectedTab === 'redTab'}>
             <Text></Text>
-          </Icon.TabBarItemIOS>
+          </TabBarIOS.Item>
         </TabBarIOS>
       </View>
     );
