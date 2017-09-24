@@ -13,69 +13,21 @@ import {
   NavigatorIOS,
   TouchableHighlight,
   StatusBar,
-  TabBarIOS
+  TabBarIOS,
+  TextInput
 } from 'react-native';
 
-import Camera from 'react-native-camera';
 import Icon from 'react-native-vector-icons/Ionicons';
-import BadInstagramExample from './components/BadInstagramExample.js';
-
-class MyView extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedTab: 'redTab',
-      notifCount: 0,
-      presses: 0,
-    };
-  }
-  _handleBackPress() {
-    this.props.navigator.pop();
-  }
-
-  _handleNextPress(nextRoute) {
-    this.props.navigator.push(nextRoute);
-  }
-
-  render() {
-    const nextRoute = {
-      component: BadInstagramExample,
-      title: 'Bar That',
-      passProps: { myProp: 'bar' }
-    };
-
-    return(
-      <View style={{flex: 1}}>
-        <TabBarIOS
-          unselectedTintColor="yellow"
-          tintColor="white"
-          barTintColor="black">
-         <Icon.TabBarItemIOS
-            iconName="ios-camera"
-            badge={this.state.notifCount > 0 ? this.state.notifCount : undefined}
-            selected={this.state.selectedTab === 'redTab'}
-            onPress={() => {
-              this._handleNextPress(nextRoute);
-            }}>
-              <Text></Text>
-          </Icon.TabBarItemIOS>
-        </TabBarIOS>
-      </View>
-    );
-  }
-}
+import BadInstagramExample from './components/BadInstagramExample';
+import BaseView from './components/BaseView';
 
 export default class TaggingTracker extends Component {
   render() {
     return (
       <View style={{flex: 1}}>
-        <StatusBar
-          backgroundColor="blue"
-          barStyle="light-content"
-        />
         <NavigatorIOS
           initialRoute={{
-            component: MyView,
+            component: BaseView,
             title: 'Current Tags',
             statusBarHidden: true,
           }}
@@ -83,17 +35,13 @@ export default class TaggingTracker extends Component {
           barTintColor="#000000"
           tintColor="#ffffff"
           titleTextColor="#ffffff"
-          renderScene={(route, navigator) =>
-            <View>
-              <StatusBar hidden={route.statusBarHidden} />
-              ...
-            </View>
-           }
-        />
+        >
+        </NavigatorIOS>
       </View>
     );
   }
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -112,4 +60,5 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 });
+
 AppRegistry.registerComponent('TaggingTracker', () => TaggingTracker);
