@@ -15,53 +15,27 @@ import {
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import BadInstagramExample from './BadInstagramExample';
-import TagList from './TagList'
+import TagView from './TagView'
 
-export default class BaseView extends Component {
+export default class TagList extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      selectedTab: 'redTab',
-      notifCount: 0,
-      presses: 0,
-      neighborhoods: []
+      tags: [
+        {id: 1, name: 'Tanners Salon'},
+        {id: 2, name: 'Bledsoes Rental'}
+      ]
     };
+
   }
+
   _handleBackPress() {
     this.props.navigator.pop();
   }
 
-  componentWillMount() {
-    fetch('https://data.kcmo.org/api/geospatial/q45j-ejyk?method=export&format=GeoJSON')
-      .then(response => response.json())
-      .then((response) => {
-        this.setState({
-          neighborhoods: response.features.map(feature => {
-            return {id: feature.properties.nbhid, name: feature.properties.nbhname}
-          }).filter(neighborhood => {
-            return neighborhood.name != null && neighborhood.name != undefined;
-          }).sort(this.alphabetizeNeighborhoods)
-        });
-      }).
-      catch((e) => { });
-  }
-
   _handleNextPress(nextRoute) {
     this.props.navigator.push(nextRoute);
-  }
-
-  alphabetizeNeighborhoods(a, b) {
-    var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-    var nameB = b.name.toUpperCase(); // ignore upper and lowercase
-    if (nameA < nameB) {
-      return -1;
-    }
-    if (nameA > nameB) {
-      return 1;
-    }
-
-    // names must be equal
-    return 0;
   }
 
   renderSeparator() {
@@ -91,10 +65,10 @@ export default class BaseView extends Component {
         <View style={{flex: 14}}>
           <FlatList
             ItemSeparatorComponent={this.renderSeparator}
-            data={this.state.neighborhoods}
+            data={this.state.tags}
             renderItem={({item}) => {
                 const nextRoute = {
-                  component: TagList,
+                  component: TagView,
                   title: item.name,
                   passProps: { myProp: 'bar' }
                 };
@@ -114,6 +88,7 @@ export default class BaseView extends Component {
          <Icon.TabBarItemIOS
             iconName="ios-camera"
             badge={this.state.notifCount > 0 ? this.state.notifCount : undefined}
+            selected={this.state.selectedTab === 'redTab'}
             onPress={() => {
               this._handleNextPress(nextRoute);
             }}>
