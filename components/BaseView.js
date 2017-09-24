@@ -23,15 +23,46 @@ export default class BaseView extends Component {
       selectedTab: 'redTab',
       notifCount: 0,
       presses: 0,
+      neighborhoods: []
     };
   }
   _handleBackPress() {
     this.props.navigator.pop();
   }
 
+  componentWillMount() {
+    fetch('https://data.kcmo.org/api/geospatial/q45j-ejyk?method=export&format=GeoJSON')
+      .then(response => response.json())
+      .then((response) => {
+        this.setState({
+          neighborhoods: response.features.map(feature => {
+            return {id: feature.properties.nbhid, name: feature.properties.nbhname}
+          }).filter(neighborhood => {
+            return neighborhood.name != null && neighborhood.name != undefined;
+          }).sort(this.alphabetizeNeighborhoods)
+        });
+      }).
+      catch((e) => { });
+  }
+
   _handleNextPress(nextRoute) {
     this.props.navigator.push(nextRoute);
   }
+
+  alphabetizeNeighborhoods(a, b) {
+    var nameA = a.name.toUpperCase(); // ignore upper and lowercase
+    var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
+    }
+
+    // names must be equal
+    return 0;
+  }
+
   renderSeparator() {
     return (
       <View
@@ -42,6 +73,10 @@ export default class BaseView extends Component {
       />
     );
   };
+
+  keyExtractor(item, index) {
+    return item.id;
+  }
 
   render() {
     const nextRoute = {
@@ -55,25 +90,9 @@ export default class BaseView extends Component {
         <View style={{flex: 14}}>
           <FlatList
             ItemSeparatorComponent={this.renderSeparator}
-            data={[
-              {key: 'Sheffield'},
-              {key: 'Crossroads'},
-              {key: 'Quality Hill'},
-              {key: 'Sheffield1'},
-              {key: 'Crossroads1'},
-              {key: 'Quality Hill1'},
-              {key: 'Sheffield2'},
-              {key: 'Crossroads2'},
-              {key: 'Quality Hill2'},
-              {key: 'Sheffield3'},
-              {key: 'Crossroads3'},
-              {key: 'Quality Hill3'},
-              {key: 'Sheffield4'},
-              {key: 'Crossroads4'},
-              {key: 'Quality Hill4'},
-
-            ]}
-            renderItem={({item}) => <Text style={styles.listItem}>{item.key}</Text> }
+            data={this.state.neighborhoods}
+            renderItem={({item}) => <Text style={styles.listItem}>{item.name}</Text> }
+            keyExtractor={this.keyExtractor}
           />
         </View>
         <TabBarIOS
