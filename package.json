@@ -11,7 +11,8 @@
     "react-native": "0.48.3",
     "react-native-camera": "^0.10.0",
     "react-native-material-kit": "^0.4.1",
-    "react-native-vector-icons": "^4.4.0"
+    "react-native-vector-icons": "^4.4.0",
+    "react-navigation": "^1.0.0-beta.11"
   },
   "devDependencies": {
     "babel-jest": "21.0.2",
