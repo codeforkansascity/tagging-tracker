@@ -3,35 +3,55 @@ import {
   Text,
   View,
   StyleSheet,
+  Button,
 } from 'react-native';
 import { MKTextField, MKButton } from 'react-native-material-kit';
 
 const RaisedButton = MKButton.flatButton().build();
 const AccentColoredRaisedButton = MKButton.accentColoredButton().build();
 
-export default class App extends Component {
+export default class TagDetailsEditDialog extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      address: '',
+    };
+
+    this.onAddressChange = this.onAddressChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  onAddressChange(address) {
+    this.setState({
+      address,
+    });
+  }
+
+  handleSubmit() {
+    // TODO: Insert submit handler here
+    console.log(this.state.address);
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.pictureContainer}>
           <Text>Picture Container</Text>
         </View>
-        <MKTextField placeholder="Address" style={styles.textInput} />
+        <MKTextField
+          placeholder="Address"
+          style={styles.textInput}
+          value={this.state.address}
+          onTextChange={this.onAddressChange}
+        />
         <View style={{display: 'flex', width: '100%', justifyContent: 'flex-end'}}>
           <View style={styles.workFlowContainer}>
             <View style={styles.workflowButton}>
-              <AccentColoredRaisedButton>
-                <Text pointerEvents="none" style={{ color: 'white', fontWeight: 'bold', }}>
-                  Submit
-                </Text>
-              </AccentColoredRaisedButton>
+              <Button onPress={this.handleSubmit} title={'Submit'} />
             </View>
             <View style={styles.workflowButton}>
-              <RaisedButton>
-                <Text pointerEvents="none" style={{ fontWeight: 'bold', }}>
-                  Cancel
-                </Text>
-              </RaisedButton>
+              <Button onPress={() => { console.log('cancel') }} title={'Cancel'} />
             </View>
           </View>
         </View>
