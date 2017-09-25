@@ -67,7 +67,6 @@ export default class BadInstagramExample extends Component {
 
     this.camera.capture()
       .then((data) => {
-        nextRoute.passProps.data = data.data;
         this._handleNextPress(nextRoute);
       })
       .catch(err => console.error(err));
