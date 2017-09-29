@@ -70,7 +70,7 @@ export default class NewTagData extends Component {
           <Text>Tag</Text>
           <Image 
             style={{width: win.width - 40, height: 200, marginTop: 10, marginBottom: 10}}
-            source={{uri: 'https://linapps.s3.amazonaws.com/linapps/photomojo/wishtv.com/photos/2014/08/g13819/257599-bb68d.jpg'}} 
+            source={{uri: this.props.data.path}}
           /> 
           <Text>Tag Description</Text>
           <TextInput style={styles.input} defaultValue={''}/>

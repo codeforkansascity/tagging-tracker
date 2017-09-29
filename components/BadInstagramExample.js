@@ -36,6 +36,7 @@ export default class BadInstagramExample extends Component {
     return (
       <View style={cameraStyles.container}>
         <Camera
+          captureTarget={Camera.constants.CaptureTarget.disk}
           ref={(cam) => {
             this.camera = cam;
           }}
@@ -67,6 +68,7 @@ export default class BadInstagramExample extends Component {
 
     this.camera.capture()
       .then((data) => {
+        nextRoute.passProps.data = data;
         this._handleNextPress(nextRoute);
       })
       .catch(err => console.error(err));
