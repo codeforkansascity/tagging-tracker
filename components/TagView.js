@@ -4,14 +4,11 @@ import {
   StyleSheet,
   Text,
   View,
-  NavigatorIOS,
   TouchableHighlight,
   StatusBar,
-  TabBarIOS,
   TextInput,
   Image,
   Dimensions,
-  TabBarIOSItem
 } from 'react-native';
 
 import Camera from 'react-native-camera';
@@ -24,7 +21,6 @@ const win = Dimensions.get('window');
 export default class TagView extends Component {
   render() {
     let tag = this.props.tag;
-    console.log(tag);
 
     return (
       <View style={{flex: 1, marginTop: 64}}>
@@ -39,15 +35,6 @@ export default class TagView extends Component {
           <Text style={styles.title}>Tag Words</Text>
           <Text>{tag.tag_words}</Text>
         </View>
-        <TabBarIOS
-          unselectedTintColor="yellow"
-          tintColor="white"
-          barTintColor="black">
-         <TabBarIOS.Item
-            iconName="ios-camera">
-            <Text></Text>
-          </TabBarIOS.Item>
-        </TabBarIOS>
       </View>
     );
   }

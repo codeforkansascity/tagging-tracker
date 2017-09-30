@@ -15,6 +15,7 @@ import {
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import BadInstagramExample from './BadInstagramExample';
+import TabNavigator from 'react-native-tab-navigator';
 
 import TagList from './TagList';
 import realm from '../realm';
@@ -119,19 +120,16 @@ export default class BaseView extends Component {
             keyExtractor={this.keyExtractor}
           />
         </View>
-        <TabBarIOS
+        <TabNavigator
           unselectedTintColor="yellow"
           tintColor="white"
           barTintColor="black">
-         <Icon.TabBarItemIOS
-            iconName="ios-camera"
-            badge={this.state.notifCount > 0 ? this.state.notifCount : undefined}
-            onPress={() => {
-              this._handleNextPress(nextRoute);
-            }}>
-            <Text></Text>
-          </Icon.TabBarItemIOS>
-        </TabBarIOS>
+          <TabNavigator.Item
+            title="Add Tag"
+            renderIcon={() => <Icon name="ios-camera" size={35} />}
+            >
+          </TabNavigator.Item>
+        </TabNavigator>
       </View>
     );
   }

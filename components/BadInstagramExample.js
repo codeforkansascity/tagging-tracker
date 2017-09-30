@@ -4,7 +4,6 @@ import {
   StyleSheet,
   Text,
   View,
-  NavigatorIOS,
   TouchableHighlight,
   StatusBar,
   TabBarIOS

@@ -4,10 +4,8 @@ import {
   StyleSheet,
   Text,
   View,
-  NavigatorIOS,
   TouchableHighlight,
   StatusBar,
-  TabBarIOS,
   TextInput,
   Image,
   Dimensions,
@@ -89,11 +87,6 @@ export default class NewTagData extends Component {
           <Text>Describe the words of this Tag</Text>
           <TextInput multiline={true} style={styles.input} value={this.state.tag_words} onChangeText={(tag_words) => this.setState({tag_words})} />
         </View>
-        <TabBarIOS
-          unselectedTintColor="yellow"
-          tintColor="white"
-          barTintColor="black">
-        </TabBarIOS>
       </View>
     );
   }
