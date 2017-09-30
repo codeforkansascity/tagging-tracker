@@ -74,6 +74,21 @@ export default class BaseView extends Component {
     return item.id;
   }
 
+  getNeighborhoods() {
+    const currentNeighborhoods = [];
+
+    return this.state.tags
+        .map(tag => ({name: tag.neighborhood}))
+        .filter(neighborhood => {
+          if (currentNeighborhoods.includes(neighborhood.name)) {
+            return false;
+          } else {
+            currentNeighborhoods.push(neighborhood.name);
+            return true;
+          }
+        });
+  }
+
   render() {
     const nextRoute = {
       component: BadInstagramExample,
@@ -81,21 +96,23 @@ export default class BaseView extends Component {
       passProps: { myProp: 'bar' }
     };
 
+    const neighborhoods = Array.from(new Set(this.state.tags.map(tag => ({name: tag.neighborhood}))));
+
     return(
       <View style={{flex: 1, marginTop: 0}}>
         <View style={{flex: 14}}>
           <FlatList
             ItemSeparatorComponent={this.renderSeparator}
-            data={this.state.tags}
+            data={this.getNeighborhoods()}
             renderItem={({item}) => {
                 const nextRoute = {
                   component: TagList,
-                  title: item.neighborhood,
-                  passProps: { neighborhood: item.neighborhood }
+                  title: item.name,
+                  passProps: { neighborhood: item.name }
                 };
 
                 return (
-                  <Text style={styles.listItem} onPress={() => this._handleNextPress(nextRoute)} >{item.neighborhood}</Text> 
+                  <Text key={item.name} style={styles.listItem} onPress={() => this._handleNextPress(nextRoute)} >{item.name}</Text> 
                 )
               }
             }
