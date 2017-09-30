@@ -23,18 +23,21 @@ const win = Dimensions.get('window');
 
 export default class TagView extends Component {
   render() {
+    let tag = this.props.tag;
+    console.log(tag);
+
     return (
       <View style={{flex: 1, marginTop: 64}}>
         <View style={{padding: 20 }}>
           <Text>Tag</Text>
           <Image 
             style={{width: win.width - 40, height: 200, marginTop: 10, marginBottom: 10}}
-            source={{uri: 'https://linapps.s3.amazonaws.com/linapps/photomojo/wishtv.com/photos/2014/08/g13819/257599-bb68d.jpg'}} 
+            source={{uri: tag.img}} 
           /> 
           <Text style={styles.title}>Square Photage</Text>
-          <Text>5' x 4'</Text>
-          <Text style={styles.title}>Describe the words of this Tag</Text>
-          <Text>This has a lot of strange words on it, but I can see lots of F word profanities on this tag.</Text>
+          <Text>{tag.square_footage}</Text>
+          <Text style={styles.title}>Tag Words</Text>
+          <Text>{tag.tag_words}</Text>
         </View>
         <TabBarIOS
           unselectedTintColor="yellow"

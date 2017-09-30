@@ -19,6 +19,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Geocoder from 'react-native-geocoding';
 
 import BaseView from './BaseView';
+import realm from '../realm';
 
 const win = Dimensions.get('window');
 
@@ -28,10 +29,10 @@ export default class NewTagData extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTab: 'redTab',
-      notifCount: 0,
-      presses: 0,
-      neighborhood: ''
+      neighborhood: '',
+      square_footage: '',
+      description: '',
+      tag_words: '',
     };
   }
 
@@ -60,6 +61,13 @@ export default class NewTagData extends Component {
   }
 
   submitForm() {
+    const TagParams = Object.assign({}, this.state);
+    TagParams.img = this.props.data.path;
+
+    realm.write(() => {
+      realm.create('Tag', TagParams);
+    });
+
     this.props.navigator.popToTop();
   }
 
@@ -73,24 +81,18 @@ export default class NewTagData extends Component {
             source={{uri: this.props.data.path}}
           /> 
           <Text>Tag Description</Text>
-          <TextInput style={styles.input} defaultValue={''}/>
-          <Text>Square Photage</Text>
-          <TextInput style={styles.input} defaultValue={''} />
+          <TextInput style={styles.input} value={this.state.description} onChangeText={(description) => this.setState({description})} />
+          <Text>Square Footage</Text>
+          <TextInput style={styles.input} value={this.state.square_footage} onChangeText={(square_footage) => this.setState({square_footage})} />
           <Text>Neighborhood</Text>
-          <TextInput style={styles.input} value={this.state.neighborhood} />
+          <TextInput style={styles.input} value={this.state.neighborhood} onChangeText={(neighborhood) => this.setState({neighborhood})} />
           <Text>Describe the words of this Tag</Text>
-          <TextInput multiline={true} style={styles.input} defaultValue={''} />
+          <TextInput multiline={true} style={styles.input} value={this.state.tag_words} onChangeText={(tag_words) => this.setState({tag_words})} />
         </View>
         <TabBarIOS
           unselectedTintColor="yellow"
           tintColor="white"
           barTintColor="black">
-         <TabBarIOS.Item
-            iconName=""
-            badge={this.state.notifCount > 0 ? this.state.notifCount : undefined}
-            selected={this.state.selectedTab === 'redTab'}>
-            <Text></Text>
-          </TabBarIOS.Item>
         </TabBarIOS>
       </View>
     );

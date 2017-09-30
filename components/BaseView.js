@@ -15,7 +15,9 @@ import {
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import BadInstagramExample from './BadInstagramExample';
-import TagList from './TagList'
+
+import TagList from './TagList';
+import realm from '../realm';
 
 export default class BaseView extends Component {
   constructor(props) {
@@ -32,18 +34,11 @@ export default class BaseView extends Component {
   }
 
   componentWillMount() {
-    fetch('https://data.kcmo.org/api/geospatial/q45j-ejyk?method=export&format=GeoJSON')
-      .then(response => response.json())
-      .then((response) => {
-        this.setState({
-          neighborhoods: response.features.map(feature => {
-            return {id: feature.properties.nbhid, name: feature.properties.nbhname}
-          }).filter(neighborhood => {
-            return neighborhood.name != null && neighborhood.name != undefined;
-          }).sort(this.alphabetizeNeighborhoods)
-        });
-      }).
-      catch((e) => { });
+    let tags = realm.objects('Tag');
+
+    this.setState({
+      tags
+    });
   }
 
   _handleNextPress(nextRoute) {
@@ -91,16 +86,16 @@ export default class BaseView extends Component {
         <View style={{flex: 14}}>
           <FlatList
             ItemSeparatorComponent={this.renderSeparator}
-            data={this.state.neighborhoods}
+            data={this.state.tags}
             renderItem={({item}) => {
                 const nextRoute = {
                   component: TagList,
-                  title: item.name,
-                  passProps: { myProp: 'bar' }
+                  title: item.neighborhood,
+                  passProps: { neighborhood: item.neighborhood }
                 };
 
                 return (
-                  <Text style={styles.listItem} onPress={() => this._handleNextPress(nextRoute)} >{item.name}</Text> 
+                  <Text style={styles.listItem} onPress={() => this._handleNextPress(nextRoute)} >{item.neighborhood}</Text> 
                 )
               }
             }

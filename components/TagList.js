@@ -15,19 +15,20 @@ import {
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import BadInstagramExample from './BadInstagramExample';
+import realm from '../realm';
 import TagView from './TagView'
 
 export default class TagList extends Component {
   constructor(props) {
     super(props);
+  }
 
-    this.state = {
-      tags: [
-        {id: 1, name: 'Tanners Salon'},
-        {id: 2, name: 'Bledsoes Rental'}
-      ]
-    };
+  componentWillMount() {
+    let tags = realm.objects('Tag').filtered('neighborhood = $0', this.props.neighborhood);
 
+    this.setState({
+      tags
+    });
   }
 
   _handleBackPress() {
@@ -69,12 +70,12 @@ export default class TagList extends Component {
             renderItem={({item}) => {
                 const nextRoute = {
                   component: TagView,
-                  title: item.name,
-                  passProps: { myProp: 'bar' }
+                  title: item.description,
+                  passProps: { tag: item }
                 };
 
                 return (
-                  <Text style={styles.listItem} onPress={() => this._handleNextPress(nextRoute)} >{item.name}</Text> 
+                  <Text style={styles.listItem} onPress={() => this._handleNextPress(nextRoute)} >{item.description}</Text> 
                 )
               }
             }
