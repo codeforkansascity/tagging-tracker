@@ -19,11 +19,17 @@ import BaseView from './BaseView';
 const win = Dimensions.get('window');
 
 export default class TagView extends Component {
+  static navigationOptions = ({navigation}) => {
+    return {
+      title: navigation.state.params.tag.description
+    };
+  };
+
   render() {
-    let tag = this.props.tag;
+    const { tag } = this.props.navigation.state.params;
 
     return (
-      <View style={{flex: 1, marginTop: 64}}>
+      <View style={{flex: 1}}>
         <View style={{padding: 20 }}>
           <Text>Tag</Text>
           <Image 

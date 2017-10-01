@@ -9,7 +9,7 @@ import {
   TextInput,
   Image,
   Dimensions,
-  TabBarIOSItem
+  Button,
 } from 'react-native';
 
 import Camera from 'react-native-camera';
@@ -18,14 +18,23 @@ import Geocoder from 'react-native-geocoding';
 
 import BaseView from './BaseView';
 import realm from '../realm';
+import { NavigationActions } from 'react-navigation'
 
 const win = Dimensions.get('window');
 
-
-
 export default class NewTagData extends Component {
+  static navigationOptions = ({navigation}) => {
+    const { state } = navigation;
+    const { submitForm } = state.params;
+
+    return {
+      headerTitle: 'New Tag',
+      headerRight: (<Button title="Save" color='#ffffff' onPress={() => submitForm()} />),
+    };
+  };
   constructor(props) {
     super(props);
+
     this.state = {
       neighborhood: '',
       square_footage: '',
@@ -35,6 +44,7 @@ export default class NewTagData extends Component {
   }
 
   componentWillMount() {
+    this.props.navigation.setParams({ submitForm: this.submitForm.bind(this), ...this.props.navigation.params });
     navigator.geolocation.getCurrentPosition(this.getNeighborhoodCoordinates.bind(this), () => {}, {});
   }
 
@@ -60,23 +70,30 @@ export default class NewTagData extends Component {
 
   submitForm() {
     const TagParams = Object.assign({}, this.state);
-    TagParams.img = this.props.data.path;
+    TagParams.img = this.props.navigation.state.params.data.path;
 
     realm.write(() => {
       realm.create('Tag', TagParams);
     });
 
-    this.props.navigator.popToTop();
+    const resetAction = NavigationActions.reset({
+      index: 0,
+      actions: [
+        NavigationActions.navigate({ routeName: 'Home'})
+      ]
+    })
+
+    this.props.navigation.dispatch(resetAction);
   }
 
   render() {
     return (
-      <View style={{flex: 1, marginTop: 64}}>
+      <View style={{flex: 1}}>
         <View style={{padding: 20 }}>
           <Text>Tag</Text>
           <Image 
             style={{width: win.width - 40, height: 200, marginTop: 10, marginBottom: 10}}
-            source={{uri: this.props.data.path}}
+            source={{uri: this.props.navigation.state.params.data.path}}
           /> 
           <Text>Tag Description</Text>
           <TextInput style={styles.input} value={this.state.description} onChangeText={(description) => this.setState({description})} />

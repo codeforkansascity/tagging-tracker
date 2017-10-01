@@ -13,6 +13,7 @@
     "react-native-geocoding": "^0.2.0",
     "react-native-tab-navigator": "^0.3.4",
     "react-native-vector-icons": "^4.4.0",
+    "react-navigation": "^1.0.0-beta.13",
     "realm": "^1.12.0"
   },
   "devDependencies": {

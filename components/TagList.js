@@ -14,17 +14,25 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
-import BadInstagramExample from './BadInstagramExample';
+
+import TagPhoto from './TagPhoto';
 import realm from '../realm';
 import TagView from './TagView'
 
 export default class TagList extends Component {
+  static navigationOptions = ({navigation}) => {
+    return {
+      title: navigation.state.params.neighborhood
+    };
+  };
+
   constructor(props) {
     super(props);
   }
 
   componentWillMount() {
-    let tags = realm.objects('Tag').filtered('neighborhood = $0', this.props.neighborhood);
+    const { neighborhood } = this.props.navigation.state.params;
+    let tags = realm.objects('Tag').filtered('neighborhood = $0', neighborhood);
 
     this.setState({
       tags
@@ -55,12 +63,6 @@ export default class TagList extends Component {
   }
 
   render() {
-    const nextRoute = {
-      component: BadInstagramExample,
-      title: '',
-      passProps: { myProp: 'bar' }
-    };
-
     return(
       <View style={{flex: 1, marginTop: 0}}>
         <View style={{flex: 14}}>
@@ -68,34 +70,14 @@ export default class TagList extends Component {
             ItemSeparatorComponent={this.renderSeparator}
             data={this.state.tags}
             renderItem={({item}) => {
-                const nextRoute = {
-                  component: TagView,
-                  title: item.description,
-                  passProps: { tag: item }
-                };
-
                 return (
-                  <Text style={styles.listItem} onPress={() => this._handleNextPress(nextRoute)} >{item.description}</Text> 
+                  <Text style={styles.listItem} onPress={() => {this.props.navigation.navigate('TagView', {tag: item})}} >{item.description}</Text> 
                 )
               }
             }
             keyExtractor={this.keyExtractor}
           />
         </View>
-        <TabBarIOS
-          unselectedTintColor="yellow"
-          tintColor="white"
-          barTintColor="black">
-         <Icon.TabBarItemIOS
-            iconName="ios-camera"
-            badge={this.state.notifCount > 0 ? this.state.notifCount : undefined}
-            selected={this.state.selectedTab === 'redTab'}
-            onPress={() => {
-              this._handleNextPress(nextRoute);
-            }}>
-            <Text></Text>
-          </Icon.TabBarItemIOS>
-        </TabBarIOS>
       </View>
     );
   }

@@ -13,16 +13,7 @@ import Camera from 'react-native-camera';
 import Icon from 'react-native-vector-icons/Ionicons';
 import NewTagData from './NewTagData';
 
-export default class BadInstagramExample extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedTab: 'redTab',
-      notifCount: 0,
-      presses: 0,
-    };
-  }
-
+export default class TagPhoto extends Component {
   _handleBackPress() {
     this.props.navigator.pop();
   }
@@ -50,25 +41,12 @@ export default class BadInstagramExample extends Component {
   }
 
   takePicture() {
+    const { navigate } = this.props.navigation;
     const options = {};
-    const nextRoute = {
-      component: NewTagData,
-      title: 'New Tag',
-      passProps: {
-        ref: (component) => {this.pushedComponent = component},
-      },
-      onRightButtonPress: () => {
-        // call func
-        this.pushedComponent && this.pushedComponent.submitForm();
-      },
-      data: {},
-      rightButtonTitle: 'Submit'
-    };
 
     this.camera.capture()
       .then((data) => {
-        nextRoute.passProps.data = data;
-        this._handleNextPress(nextRoute);
+        navigate('NewTagData', {data: data});
       })
       .catch(err => console.error(err));
   }

@@ -4,23 +4,25 @@ import {
   StyleSheet,
   Text,
   View,
-  NavigatorIOS,
   TouchableHighlight,
   StatusBar,
-  TabBarIOS,
   TextInput,
   FlatList,
   ListItem
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
-import BadInstagramExample from './BadInstagramExample';
+import TagPhoto from './TagPhoto';
 import TabNavigator from 'react-native-tab-navigator';
 
 import TagList from './TagList';
 import realm from '../realm';
 
 export default class BaseView extends Component {
+  static navigationOptions = {
+    title: 'Tagging Tracker',
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -40,10 +42,6 @@ export default class BaseView extends Component {
     this.setState({
       tags
     });
-  }
-
-  _handleNextPress(nextRoute) {
-    this.props.navigator.push(nextRoute);
   }
 
   alphabetizeNeighborhoods(a, b) {
@@ -92,12 +90,13 @@ export default class BaseView extends Component {
 
   render() {
     const nextRoute = {
-      component: BadInstagramExample,
+      component: TagPhoto,
       title: '',
       passProps: { myProp: 'bar' }
     };
 
     const neighborhoods = Array.from(new Set(this.state.tags.map(tag => ({name: tag.neighborhood}))));
+    const { navigate } = this.props.navigation;
 
     return(
       <View style={{flex: 1, marginTop: 0}}>
@@ -106,14 +105,8 @@ export default class BaseView extends Component {
             ItemSeparatorComponent={this.renderSeparator}
             data={this.getNeighborhoods()}
             renderItem={({item}) => {
-                const nextRoute = {
-                  component: TagList,
-                  title: item.name,
-                  passProps: { neighborhood: item.name }
-                };
-
                 return (
-                  <Text key={item.name} style={styles.listItem} onPress={() => this._handleNextPress(nextRoute)} >{item.name}</Text> 
+                  <Text key={item.name} style={styles.listItem} onPress={() => {this.props.navigation.navigate('TagList', {neighborhood: item.name})}} >{item.name}</Text> 
                 )
               }
             }
@@ -123,10 +116,14 @@ export default class BaseView extends Component {
         <TabNavigator
           unselectedTintColor="yellow"
           tintColor="white"
-          barTintColor="black">
+          barTintColor="black"
+          >
           <TabNavigator.Item
             title="Add Tag"
-            renderIcon={() => <Icon name="ios-camera" size={35} />}
+            renderIcon={() => <Icon name="ios-camera" size={30}
+            style={{backgroundColor: '#00000000'}}
+            onPress={() => {navigate('TagPhoto');}}
+             />}
             >
           </TabNavigator.Item>
         </TabNavigator>
