@@ -10,6 +10,7 @@ import {
   Image,
   Dimensions,
   Button,
+  Platform,
 } from 'react-native';
 
 import Camera from 'react-native-camera';
@@ -26,10 +27,10 @@ export default class NewTagData extends Component {
   static navigationOptions = ({navigation}) => {
     const { state } = navigation;
     const { submitForm } = state.params;
-
+    const buttonColor = Platform.OS === 'ios' ? '#ffffff' : '#000000'
     return {
       headerTitle: 'New Tag',
-      headerRight: (<Button title="Save" color='#ffffff' onPress={() => submitForm()} />),
+      headerRight: (<Button title="Save" color={buttonColor} onPress={() => submitForm()} />),
     };
   };
   constructor(props) {
