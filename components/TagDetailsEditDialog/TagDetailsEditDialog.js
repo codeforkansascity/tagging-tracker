@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Text,
+  Image,
   View,
   Button,
   ScrollView,
@@ -66,6 +66,7 @@ export default class TagDetailsEditDialog extends Component {
   handleSubmit() {
     // TODO: Insert submit handler here
     console.log(this.state.address);
+    this.props.navigation.navigate('Home');
   }
 
   render() {
@@ -73,7 +74,15 @@ export default class TagDetailsEditDialog extends Component {
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.pictureContainer}>
-            <Text>Picture Container</Text>
+
+            <Image
+              source={{
+                isStatic: true,
+                uri: this.props.navigation.state.params.passProps.data.mediaUri,
+              }}
+              style={{height: 200, width: 200}}
+            />
+
           </View>
           <MKTextField
             placeholder="Address"

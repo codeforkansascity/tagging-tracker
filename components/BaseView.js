@@ -1,19 +1,12 @@
 import React, { Component } from 'react';
 import {
-  AppRegistry,
   StyleSheet,
   Text,
   View,
-  NavigatorIOS,
-  TouchableHighlight,
-  StatusBar,
-  TabBarIOS,
-  TextInput,
   FlatList,
-  ListItem
+  Button,
 } from 'react-native';
 
-import Icon from 'react-native-vector-icons/Ionicons';
 import BadInstagramExample from './BadInstagramExample';
 import TagList from './TagList'
 
@@ -26,9 +19,9 @@ export default class BaseView extends Component {
       presses: 0,
       neighborhoods: []
     };
-  }
-  _handleBackPress() {
-    this.props.navigator.pop();
+
+    this.onNeighborhoodSelection = this.onNeighborhoodSelection.bind(this);
+    this.onCreateTagPress = this.onCreateTagPress.bind(this);
   }
 
   componentWillMount() {
@@ -46,8 +39,12 @@ export default class BaseView extends Component {
       catch((e) => { });
   }
 
-  _handleNextPress(nextRoute) {
-    this.props.navigator.push(nextRoute);
+  onCreateTagPress() {
+    this.props.navigation.navigate('CameraView');
+  }
+
+  onNeighborhoodSelection(neighborhood) {
+    this.props.navigation.navigate('TagsGallery', { neighborhood });
   }
 
   alphabetizeNeighborhoods(a, b) {
@@ -75,7 +72,7 @@ export default class BaseView extends Component {
     );
   };
 
-  keyExtractor(item, index) {
+  keyExtractor(item) {
     return item.id;
   }
 
@@ -89,37 +86,25 @@ export default class BaseView extends Component {
     return(
       <View style={{flex: 1, marginTop: 0}}>
         <View style={{flex: 14}}>
+          <Button title={'Create Tag'} onPress={this.onCreateTagPress} />
           <FlatList
             ItemSeparatorComponent={this.renderSeparator}
             data={this.state.neighborhoods}
             renderItem={({item}) => {
-                const nextRoute = {
+                const neighborhood = {
                   component: TagList,
                   title: item.name,
                   passProps: { myProp: 'bar' }
                 };
 
                 return (
-                  <Text style={styles.listItem} onPress={() => this._handleNextPress(nextRoute)} >{item.name}</Text> 
+                  <Text style={styles.listItem} onPress={() => this.onNeighborhoodSelection(neighborhood)} >{item.name}</Text>
                 )
               }
             }
             keyExtractor={this.keyExtractor}
           />
         </View>
-        <TabBarIOS
-          unselectedTintColor="yellow"
-          tintColor="white"
-          barTintColor="black">
-         <Icon.TabBarItemIOS
-            iconName="ios-camera"
-            badge={this.state.notifCount > 0 ? this.state.notifCount : undefined}
-            onPress={() => {
-              this._handleNextPress(nextRoute);
-            }}>
-            <Text></Text>
-          </Icon.TabBarItemIOS>
-        </TabBarIOS>
       </View>
     );
   }

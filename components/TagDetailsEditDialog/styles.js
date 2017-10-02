@@ -9,8 +9,6 @@ export default StyleSheet.create({
   },
   pictureContainer: {
     borderWidth: 1,
-    borderColor: '#333',
-    borderStyle: 'solid',
     padding: 20,
     margin: 10,
   },

@@ -1,13 +1,8 @@
 import React, { Component } from 'react';
 import {
-  AppRegistry,
   StyleSheet,
   Text,
   View,
-  NavigatorIOS,
-  TouchableHighlight,
-  StatusBar,
-  TabBarIOS
 } from 'react-native';
 
 import Camera from 'react-native-camera';
@@ -24,12 +19,8 @@ export default class BadInstagramExample extends Component {
     };
   }
 
-  _handleBackPress() {
-    this.props.navigator.pop();
-  }
-
-  _handleNextPress(nextRoute) {
-    this.props.navigator.push(nextRoute);
+  _handleNextPress(photoData) {
+    this.props.navigation.navigate('TagDetailsEditDialog', photoData);
   }
 
   render() {
@@ -67,7 +58,7 @@ export default class BadInstagramExample extends Component {
 
     this.camera.capture()
       .then((data) => {
-        nextRoute.passProps.data = data.data;
+        nextRoute.passProps.data = data;
         this._handleNextPress(nextRoute);
       })
       .catch(err => console.error(err));
