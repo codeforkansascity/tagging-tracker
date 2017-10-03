@@ -91,12 +91,11 @@ export default class NewTagData extends Component {
   render() {
     return (
       <ScrollView style={{flex: 1}}>
+        <Image 
+          style={{width: win.width, height: 200}}
+          source={{uri: this.props.navigation.state.params.data.path}}
+        /> 
         <View style={{padding: 20 }}>
-          <Text>Tag</Text>
-          <Image 
-            style={{width: win.width - 40, height: 200, marginTop: 10, marginBottom: 10}}
-            source={{uri: this.props.navigation.state.params.data.path}}
-          /> 
           <Text>Tag Description</Text>
           <TextInput style={styles.input} value={this.state.description} onChangeText={(description) => this.setState({description})} />
           <Text>Square Footage</Text>

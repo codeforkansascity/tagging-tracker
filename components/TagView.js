@@ -30,12 +30,12 @@ export default class TagView extends Component {
 
     return (
       <View style={{flex: 1}}>
+        <Image
+          style={{width: win.width, height: 200}}
+          source={{uri: tag.img}} 
+        />
         <View style={{padding: 20 }}>
           <Text>Tag</Text>
-          <Image 
-            style={{width: win.width - 40, height: 200, marginTop: 10, marginBottom: 10}}
-            source={{uri: tag.img}} 
-          /> 
           <Text style={styles.title}>Square Photage</Text>
           <Text>{tag.square_footage}</Text>
           <Text style={styles.title}>Tag Words</Text>
