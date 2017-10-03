@@ -11,6 +11,7 @@ import {
   Dimensions,
   Button,
   Platform,
+  ScrollView,
 } from 'react-native';
 
 import Camera from 'react-native-camera';
@@ -89,7 +90,7 @@ export default class NewTagData extends Component {
 
   render() {
     return (
-      <View style={{flex: 1}}>
+      <ScrollView style={{flex: 1}}>
         <View style={{padding: 20 }}>
           <Text>Tag</Text>
           <Image 
@@ -105,7 +106,7 @@ export default class NewTagData extends Component {
           <Text>Describe the words of this Tag</Text>
           <TextInput multiline={true} style={styles.input} value={this.state.tag_words} onChangeText={(tag_words) => this.setState({tag_words})} />
         </View>
-      </View>
+      </ScrollView>
     );
   }
 }
