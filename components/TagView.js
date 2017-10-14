@@ -1,42 +1,66 @@
 import React, { Component } from 'react';
 import {
-  AppRegistry,
   StyleSheet,
   Text,
   View,
-  TouchableHighlight,
-  StatusBar,
-  TextInput,
   Image,
   Dimensions,
+  Modal,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import Camera from 'react-native-camera';
-import Icon from 'react-native-vector-icons/Ionicons';
-
-import BaseView from './BaseView';
+import EditTagModal from './EditTagModal';
 
 const win = Dimensions.get('window');
 
+const EditIcon = ({ onPress }) => (
+  <Icon
+    name="mode-edit"
+    size={25}
+    color="#fff"
+    onPress={onPress}
+  />);
+
 export default class TagView extends Component {
-  static navigationOptions = ({navigation}) => {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      editDetailsModalOpen: false,
+    };
+
+    this.onEditSelected = this.onEditSelected.bind(this);
+  }
+
+  static navigationOptions = ({ navigation }) => {
     return {
-      title: navigation.state.params.tag.description
+      title: navigation.state.params.tag.description,
+      headerRight: <EditIcon onPress={navigation.state.params.onEditSelected} />
     };
   };
+
+  componentWillMount() {
+    this.props.navigation.setParams({ onEditSelected: this.onEditSelected });
+  }
+
+  onEditSelected() {
+    this.setState({
+      editDetailsModalOpen: true,
+    });
+  }
 
   render() {
     const { tag } = this.props.navigation.state.params;
 
     return (
-      <View style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
         <Image
-          style={{width: win.width, height: 200}}
-          source={{uri: tag.img}} 
+          style={{ width: win.width, height: 200 }}
+          source={{ uri: tag.img }}
         />
-        <View style={{padding: 20 }}>
+        <View style={{ padding: 20 }}>
           <Text>Tag</Text>
-          <Text style={styles.title}>Square Photage</Text>
+          <Text style={styles.title}>Square Footage</Text>
           <Text>{tag.square_footage}</Text>
           <Text style={styles.title}>Tag Words</Text>
           <Text>{tag.tag_words}</Text>
