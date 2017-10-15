@@ -47,7 +47,7 @@ export default class NewTagData extends Component {
 
   componentWillMount() {
     this.props.navigation.setParams({ submitForm: this.submitForm.bind(this), ...this.props.navigation.params });
-    navigator.geolocation.getCurrentPosition(this.getNeighborhoodCoordinates.bind(this), () => {}, {});
+    navigator.geolocation.getCurrentPosition(this.getNeighborhoodCoordinates.bind(this), () => {}, {maximumAge: 2000});
   }
 
   getNeighborhoodCoordinates(pos) {
