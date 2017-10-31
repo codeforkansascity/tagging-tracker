@@ -10,7 +10,8 @@ import {
   TabBarIOS,
   TextInput,
   FlatList,
-  ListItem
+  ListItem,
+  Image,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -71,7 +72,12 @@ export default class TagList extends Component {
             data={this.state.tags}
             renderItem={({item}) => {
                 return (
-                  <Text style={styles.listItem} onPress={() => {this.props.navigation.navigate('TagView', {tag: item})}} >{item.description}</Text> 
+                  <View style={styles.listItem}>
+                    <Image style={{width: 30, height: 30, borderRadius: 15, marginRight: 10}} source={{uri: `https://cdn.pixabay.com/photo/2016/03/28/12/35/cat-1285634_1280.png`}} />
+                    <Text style={{alignContent: 'center', textAlignVertical: 'center'}} onPress={() => {this.props.navigation.navigate('TagView', {tag: item})}} >
+                      {item.description}
+                    </Text>
+                  </View>
                 )
               }
             }
@@ -86,13 +92,9 @@ export default class TagList extends Component {
 const styles = StyleSheet.create({
   listItem: {
     flex: 1,
-    justifyContent: 'center',
+    flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#ffffff',
-    padding: 10,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderBottomColor: '#dddddd',
-    borderTopColor: '#dddddd'
+    padding: 5
   },
 });
