@@ -39,6 +39,7 @@ export default class NewTagData extends Component {
 
     this.state = {
       neighborhood: '',
+      address: '',
       square_footage: '',
       description: '',
       tag_words: '',
@@ -47,14 +48,16 @@ export default class NewTagData extends Component {
 
   componentWillMount() {
     this.props.navigation.setParams({ submitForm: this.submitForm.bind(this), ...this.props.navigation.params });
-    navigator.geolocation.getCurrentPosition(this.getNeighborhoodCoordinates.bind(this), () => {}, {maximumAge: 2000});
+    navigator.geolocation.getCurrentPosition(this.getInfoFromCoordinates.bind(this), () => {}, {maximumAge: 2000, enableHighAccuracy: true, timeout: 5000});
   }
 
-  getNeighborhoodCoordinates(pos) {
+  getInfoFromCoordinates(pos) {
     Geocoder.setApiKey('AIzaSyD4Oan5v5glCpoKUNUN_AjckZ29YeETzV4');
 
     Geocoder.getFromLatLng(pos.coords.latitude, pos.coords.longitude).then(
       json => {
+
+        const formatted_address = json.results[0].formatted_address;
         var address_component = json.results[0].address_components.find((component) => {
           return component.types.includes('neighborhood');
         });
@@ -62,6 +65,12 @@ export default class NewTagData extends Component {
         if(address_component) {
           this.setState({
             neighborhood: address_component.long_name
+          });
+        }
+
+        if (formatted_address) {
+          this.setState({
+            address: formatted_address
           });
         }
       },
@@ -91,10 +100,10 @@ export default class NewTagData extends Component {
   render() {
     return (
       <ScrollView style={{flex: 1}}>
-        <Image 
+        <Image
           style={{width: win.width, height: 200}}
           source={{uri: this.props.navigation.state.params.data.path}}
-        /> 
+        />
         <View style={{padding: 20 }}>
           <Text>Tag Description</Text>
           <TextInput style={styles.input} value={this.state.description} onChangeText={(description) => this.setState({description})} />
@@ -102,6 +111,8 @@ export default class NewTagData extends Component {
           <TextInput style={styles.input} value={this.state.square_footage} onChangeText={(square_footage) => this.setState({square_footage})} />
           <Text>Neighborhood</Text>
           <TextInput style={styles.input} value={this.state.neighborhood} onChangeText={(neighborhood) => this.setState({neighborhood})} />
+          <Text>Address</Text>
+          <TextInput style={styles.input} value={this.state.address} onChangeText={(address) => this.setState({address})} />
           <Text>Describe the words of this Tag</Text>
           <TextInput multiline={true} style={styles.input} value={this.state.tag_words} onChangeText={(tag_words) => this.setState({tag_words})} />
         </View>
