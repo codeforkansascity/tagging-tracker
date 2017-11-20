@@ -8,7 +8,7 @@ import {
   StatusBar,
   TextInput,
   FlatList,
-  ListItem
+  ListItem,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -25,13 +25,16 @@ export default class BaseView extends Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
       selectedTab: 'redTab',
       notifCount: 0,
       presses: 0,
-      neighborhoods: []
+      neighborhoods: [],
+      tags: [],
     };
   }
+
   _handleBackPress() {
     this.props.navigator.pop();
   }
