@@ -1,4 +1,8 @@
 rootProject.name = 'TaggingTracker'
+include ':react-native-auth0'
+project(':react-native-auth0').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-auth0/android')
+include ':react-native-config'
+project(':react-native-config').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-config/android')
 include ':realm'
 project(':realm').projectDir = new File(rootProject.projectDir, '../node_modules/realm/android')
 include ':react-native-vector-icons'

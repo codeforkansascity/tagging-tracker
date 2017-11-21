@@ -3,6 +3,8 @@ package com.taggingtracker;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.auth0.react.A0Auth0Package;
+import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import io.realm.react.RealmReactPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.lwansbrough.RCTCamera.RCTCameraPackage;
@@ -26,6 +28,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new A0Auth0Package(),
+            new ReactNativeConfigPackage(),
             new RealmReactPackage(),
             new VectorIconsPackage(),
             new RCTCameraPackage()

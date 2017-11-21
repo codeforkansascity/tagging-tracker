@@ -35,6 +35,12 @@ const onRequestFailed = (exception) => {
   throw exception;
 };
 
+const setUser = (response) => {
+  const userId = response.sub.split('|')[1];
+  const tokens = store.getState().session.tokens;
+  store.dispatch(actionCreators.update({ tokens, user: {id: userId} }))
+}
+
 export const refreshToken = () => {
   const session = store.getState().session;
 
@@ -54,8 +60,10 @@ export const logOut = () =>
 
 export const authenticate = (email, password) =>
   api.authenticate(email, password)
-  .then(onRequestSuccess)
-  .catch(onRequestFailed);
+    .then(onRequestSuccess)
+    .then(api.getUserInfo)
+    .then(setUser)
+    .catch(onRequestFailed);
 
 export const revoke = () => {
   const session = selectors.get();
