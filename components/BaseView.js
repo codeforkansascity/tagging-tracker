@@ -12,11 +12,12 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
-import TagPhoto from './TagPhoto';
 import TabNavigator from 'react-native-tab-navigator';
 
+import TagPhoto from './TagPhoto';
 import TagList from './TagList';
 import realm from '../realm';
+import store from '../store';
 
 export default class BaseView extends Component {
   static navigationOptions = {

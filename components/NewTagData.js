@@ -34,6 +34,7 @@ export default class NewTagData extends Component {
       headerRight: (<Button title="Save" color={buttonColor} onPress={() => submitForm()} />),
     };
   };
+
   constructor(props) {
     super(props);
 
