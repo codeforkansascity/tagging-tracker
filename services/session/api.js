@@ -1,6 +1,11 @@
 import { Buffer } from 'buffer';
-import config from '../../config/AuthenticationServer';
 import axios from 'axios';
+import Auth0 from 'react-native-auth0';
+
+import store from '../../store';
+import credentials from '../../config/Auth0Config';
+
+const auth0 = new Auth0(credentials);
 
 const endPoints = {
   authenticate: '/users/auth',
@@ -8,13 +13,11 @@ const endPoints = {
   refresh: '/users/auth/refresh',
 };
 
-const fetchApi = (url, options, method, authentication) => {  
-  return axios.get('https://data.kcmo.org/resource/cyqf-nban.json')
-    .then(() => {
-      if (!authentication.Authorization.includes('amFrZS5sYWN')) {
-        throw new Error('Password is bad');
-      }
-
+const fetchApi = (url, options, method, authentication) => {
+  return auth0
+    .auth
+    .passwordRealm({username: authentication.email, password: authentication.password, realm: "Username-Password-Authentication"})
+    .then(response => {
       return {
         user: {
           id: 25
@@ -22,8 +25,8 @@ const fetchApi = (url, options, method, authentication) => {
         tokens: [
           {
             type: 'access',
-            value: 'value',
-            expiresIn: '3600',
+            value: response.accessToken,
+            expiresIn: response.expiresIn,
           }, 
           {
             type: 'refresh',
@@ -33,6 +36,12 @@ const fetchApi = (url, options, method, authentication) => {
       };
     });
 }
+
+export const getUserInfo = () =>
+  auth0
+    .auth
+    .userInfo({token: store.getState().session.tokens.access.value})
+    .then(response => response);
 
 export const logOut = () => {
   return new Promise((resolve, reject) => {
@@ -49,18 +58,16 @@ export const logOut = () => {
         }
       ],
       user: {
-        id: 'blank'
+        id: null
       }
     });
   });
 }
 
-export const authenticate = (email, password) => fetchApi(endPoints.authenticate, {}, 'post', {
-  Authorization: `Basic ${new Buffer(`${email}:${password}`).toString('base64')}`,
-});
+export const authenticate = (email, password) => fetchApi(endPoints.authenticate, {}, 'post', { email, password });
 
 export const refresh = (token, user) => fetchApi(endPoints.refresh, { token, user }, 'post', {
-  'Client-ID': config.clientId,
+  'Client-ID': credentials.clientId,
   Authorization: null,
 });
 
