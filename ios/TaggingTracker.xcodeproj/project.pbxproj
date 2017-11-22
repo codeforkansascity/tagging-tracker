@@ -149,13 +149,6 @@
 			remoteGlobalIDString = 4107012F1ACB723B00C6AA39;
 			remoteInfo = RCTCamera;
 		};
-		103F82EA1FC504E90061AF1D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E42BFD54FFC34A90AB2B62A0 /* A0Auth0.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = A0Auth0;
-		};
 		1096A8961F7DE16200EEF945 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 2CDD3BB1EC3A43B8B18B32FE /* RealmReact.xcodeproj */;
@@ -169,6 +162,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = EB2648DF1C7BE17A00B8F155;
 			remoteInfo = ReactNativeConfig;
+		};
+		10A4DBF41FC3EE5B00070382 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E42BFD54FFC34A90AB2B62A0 /* A0Auth0.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = A0Auth0;
 		};
 		139105C01AF99BAD00B5F7CC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -513,14 +513,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		103F82E71FC504E90061AF1D /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				103F82EB1FC504E90061AF1D /* libA0Auth0.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		1096A8411F78ABC000EEF945 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
@@ -545,6 +537,14 @@
 			isa = PBXGroup;
 			children = (
 				10A4DBBC1FC26BD000070382 /* libReactNativeConfig.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		10A4DBF11FC3EE5B00070382 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				10A4DBF51FC3EE5B00070382 /* libA0Auth0.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -831,7 +831,7 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 103F82E71FC504E90061AF1D /* Products */;
+					ProductGroup = 10A4DBF11FC3EE5B00070382 /* Products */;
 					ProjectRef = E42BFD54FFC34A90AB2B62A0 /* A0Auth0.xcodeproj */;
 				},
 				{
@@ -994,13 +994,6 @@
 			remoteRef = 103BA2B81F76D8A000B70349 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		103F82EB1FC504E90061AF1D /* libA0Auth0.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libA0Auth0.a;
-			remoteRef = 103F82EA1FC504E90061AF1D /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		1096A8971F7DE16200EEF945 /* libRealmReact.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1013,6 +1006,13 @@
 			fileType = archive.ar;
 			path = libReactNativeConfig.a;
 			remoteRef = 10A4DBBB1FC26BD000070382 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		10A4DBF51FC3EE5B00070382 /* libA0Auth0.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libA0Auth0.a;
+			remoteRef = 10A4DBF41FC3EE5B00070382 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		139105C11AF99BAD00B5F7CC /* libRCTSettings.a */ = {

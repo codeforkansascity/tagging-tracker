@@ -2,6 +2,7 @@ import { AsyncStorage } from 'react-native';
 import { createStore, combineReducers } from 'redux';
 import { persistStore, persistCombineReducers } from 'redux-persist'
 import sessionReducer from '../reducers/session';
+import networkReducer from '../reducers/network';
 
 const appReducer = persistCombineReducers(
   {
@@ -10,7 +11,8 @@ const appReducer = persistCombineReducers(
     blacklist: ['data'],
   },
   {
-    session: sessionReducer
+    session: sessionReducer,
+    network: networkReducer,
   }
 );
 
