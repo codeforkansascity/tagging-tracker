@@ -26,7 +26,7 @@ import Login from './components/Login';
 import store from './store';
 import networkActions from './services/network/actions';
 
-const initialRoute = store.getState().session.user.id ? 'Home' : 'Login';
+const initialRoute = store.getState().session.user.id ? 'Login' : 'Home';
 
 const StackNavigation = StackNavigator({
   Home: { screen: BaseView },
