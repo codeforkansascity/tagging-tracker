@@ -27,8 +27,9 @@ const win = Dimensions.get('window');
 export default class NewTagData extends Component {
   static navigationOptions = ({navigation}) => {
     const { state } = navigation;
-    const { submitForm } = state.params;
+    const { submitForm, TagData } = state.params;
     const buttonColor = Platform.OS === 'ios' ? '#ffffff' : '#000000'
+
     return {
       headerTitle: 'New Tag',
       headerRight: (<Button title="Save" color={buttonColor} onPress={() => submitForm()} />),
@@ -39,54 +40,52 @@ export default class NewTagData extends Component {
     super(props);
 
     this.state = {
-      neighborhood: '',
-      square_footage: '',
       description: '',
+      img: 'string',
+      crossed_out: false,
+      date_taken: new Date(),
+      gang_related: false,
+      neighborhood: '',
+      racially_motivated: false,
+      square_footage: '',
+      surface: 'string',
       tag_words: '',
+      tag_initials: '',
     };
   }
 
   componentWillMount() {
-    this.props.navigation.setParams({ submitForm: this.submitForm.bind(this), ...this.props.navigation.params });
-    navigator.geolocation.getCurrentPosition(this.getNeighborhoodCoordinates.bind(this), () => {}, {maximumAge: 2000});
+    this.props.navigation.setParams({ 
+      submitForm: this.submitForm.bind(this), 
+      ...this.props.navigation.params
+    });
   }
 
-  getNeighborhoodCoordinates(pos) {
-    Geocoder.setApiKey('AIzaSyD4Oan5v5glCpoKUNUN_AjckZ29YeETzV4');
-
-    Geocoder.getFromLatLng(pos.coords.latitude, pos.coords.longitude).then(
-      json => {
-        var address_component = json.results[0].address_components.find((component) => {
-          return component.types.includes('neighborhood');
-        });
-
-        if(address_component) {
-          this.setState({
-            neighborhood: address_component.long_name
-          });
-        }
-      },
-      error => {
-      }
-    );
+  componentDidMount() {
+    this.setState({
+      neighborhood: this.props.navigation.state.params.address.neighborhood,
+    })
   }
 
   submitForm() {
-    const TagParams = Object.assign({}, this.state);
-    TagParams.img = this.props.navigation.state.params.data.path;
+    const { address } = this.props.navigation.state.params;
+    const tagParams = Object.assign({}, this.state);
+    tagParams.img = this.props.navigation.state.params.imgData.path;
 
     realm.write(() => {
-      realm.create('Tag', TagParams);
+      address.tags.push(tagParams);
     });
 
-    const resetAction = NavigationActions.reset({
-      index: 0,
+    const addressViewReRoute = NavigationActions.reset({
+      index: 2,
       actions: [
-        NavigationActions.navigate({ routeName: 'Home'})
+        NavigationActions.navigate({ routeName: 'Home'}),
+        NavigationActions.navigate({ routeName: 'AddressList', params: {neighborhood: address.neighborhood}}),
+        NavigationActions.navigate({ routeName: 'AddressView', params: {address}}),
       ]
     })
 
-    this.props.navigation.dispatch(resetAction);
+    this.props.navigation.dispatch(addressViewReRoute);
   }
 
   render() {
@@ -94,10 +93,10 @@ export default class NewTagData extends Component {
       <ScrollView style={{flex: 1}}>
         <Image 
           style={{width: win.width, height: 200}}
-          source={{uri: this.props.navigation.state.params.data.path}}
+          source={{uri: this.props.navigation.state.params.imgData.path}}
         /> 
         <View style={{padding: 20 }}>
-          <Text>Tag Description</Text>
+          <Text>Short Description</Text>
           <TextInput style={styles.input} value={this.state.description} onChangeText={(description) => this.setState({description})} />
           <Text>Square Footage</Text>
           <TextInput style={styles.input} value={this.state.square_footage} onChangeText={(square_footage) => this.setState({square_footage})} />

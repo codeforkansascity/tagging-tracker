@@ -20,7 +20,7 @@ import TagPhoto from './TagPhoto';
 import realm from '../realm';
 import TagView from './TagView'
 
-export default class TagList extends Component {
+export default class AddressList extends Component {
   static navigationOptions = ({navigation}) => {
     return {
       title: navigation.state.params.neighborhood
@@ -33,10 +33,10 @@ export default class TagList extends Component {
 
   componentWillMount() {
     const { neighborhood } = this.props.navigation.state.params;
-    let tags = realm.objects('Tag').filtered('neighborhood = $0', neighborhood);
+    let addresses = realm.objects('Address').filtered('neighborhood = $0', neighborhood);
 
     this.setState({
-      tags
+      addresses
     });
   }
 
@@ -61,13 +61,12 @@ export default class TagList extends Component {
         <View style={{flex: 14}}>
           <FlatList
             ItemSeparatorComponent={this.renderSeparator}
-            data={this.state.tags}
+            data={this.state.addresses}
             renderItem={({item}) => {
                 return (
                   <View style={styles.listItem}>
-                    <Image style={{width: 30, height: 30, borderRadius: 15, marginRight: 10}} source={{uri: `https://cdn.pixabay.com/photo/2016/03/28/12/35/cat-1285634_1280.png`}} />
-                    <Text style={{alignContent: 'center', textAlignVertical: 'center'}} onPress={() => {this.props.navigation.navigate('TagView', {tag: item})}} >
-                      {item.description}
+                    <Text style={{alignContent: 'center', textAlignVertical: 'center'}} onPress={() => {this.props.navigation.navigate('AddressView', {address: item})}} >
+                      {item.street}
                     </Text>
                   </View>
                 )
@@ -87,6 +86,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#ffffff',
-    padding: 5
+    padding: 10
   },
 });

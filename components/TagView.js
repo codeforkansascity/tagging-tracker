@@ -36,7 +36,7 @@ export default class TagView extends Component {
             padding: 10,
             textShadowColor: '#000000',
             textShadowOffset: {width: 1, height: 1},
-            textShadowRadius: 0
+            textShadowRadius: 0,
           }
         }
         name="md-trash"
@@ -87,8 +87,7 @@ export default class TagView extends Component {
       realm.delete(tag);
     });
 
-    const backAction = NavigationActions.back();
-    this.props.navigation.dispatch(backAction);
+    this.props.navigation.dispatch(NavigationActions.back());
   }
 
   render() {

@@ -17,21 +17,27 @@ import { StackNavigator } from 'react-navigation';
 import BaseView from './components/BaseView';
 import TagPhoto from './components/TagPhoto';
 import NewTagData from './components/NewTagData';
+import AddressList from './components/AddressList';
+import AddressView from './components/AddressView';
+import NewAddress from './components/NewAddress';
 import TagList from './components/TagList';
 import TagView from './components/TagView';
 import Login from './components/Login';
 import store from './store';
 import networkActions from './services/network/actions';
 
-const initialRoute = store.getState().session.user.id ? 'Home' : 'Login';
+const initialRoute = store.getState().session.user.id ? 'Login' : 'Home';
 
 const StackNavigation = StackNavigator({
   Home: { screen: BaseView },
   TagPhoto: { screen: TagPhoto },
   NewTagData: { screen: NewTagData },
+  NewAddress: { screen: NewAddress },
+  AddressList: { screen: AddressList },
+  AddressView: { screen: AddressView },
   TagList: { screen: TagList },
   TagView: { screen: TagView },
-  Login: { screen: Login }
+  Login: { screen: Login },
 }, {
   initialRouteName: initialRoute,
   navigationOptions: {
