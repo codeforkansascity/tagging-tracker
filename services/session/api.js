@@ -19,9 +19,6 @@ const fetchApi = (url, options, method, authentication) => {
     .passwordRealm({username: authentication.email, password: authentication.password, realm: "Username-Password-Authentication"})
     .then(response => {
       return {
-        user: {
-          id: 25
-        },
         tokens: [
           {
             type: 'access',

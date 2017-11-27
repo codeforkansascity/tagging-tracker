@@ -14,14 +14,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import NewTagData from './NewTagData';
 
 export default class TagPhoto extends Component {
-  _handleBackPress() {
-    this.props.navigator.pop();
-  }
-
-  _handleNextPress(nextRoute) {
-    this.props.navigator.push(nextRoute);
-  }
-
   render() {
     return (
       <View style={cameraStyles.container}>
@@ -42,13 +34,19 @@ export default class TagPhoto extends Component {
 
   takePicture() {
     const { navigate } = this.props.navigation;
+    const { address } = this.props.navigation.state.params;
     const options = {};
 
     this.camera.capture()
       .then((data) => {
-        navigate('NewTagData', {data: data});
+        navigate(
+          'NewTagData',
+          {
+            imgData: data,
+            address,
+          }
+        );
       })
-      .catch(err => console.error(err));
   }
 }
 

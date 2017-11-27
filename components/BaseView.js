@@ -13,6 +13,9 @@ import {
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import TabNavigator from 'react-native-tab-navigator';
+import { DialogComponent, DialogTitle, DialogContent, DialogButton } from 'react-native-dialog-component';
+import Geocoder from 'react-native-geocoding';
+import { NavigationActions } from 'react-navigation'
 
 import TagPhoto from './TagPhoto';
 import TagList from './TagList';
@@ -32,25 +35,23 @@ export default class BaseView extends Component {
       notifCount: 0,
       presses: 0,
       neighborhoods: [],
-      tags: [],
+      addresses: [],
+      queriedAddresses: [],
     };
   }
 
-  _handleBackPress() {
-    this.props.navigator.pop();
-  }
-
   componentWillMount() {
-    let tags = realm.objects('Tag');
+    let addresses = realm.objects('Address');
 
     this.setState({
-      tags
+      addresses
     });
   }
 
   alphabetizeNeighborhoods(a, b) {
-    var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-    var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+    var nameA = a.name.toUpperCase();
+    var nameB = b.name.toUpperCase();
+
     if (nameA < nameB) {
       return -1;
     }
@@ -80,7 +81,7 @@ export default class BaseView extends Component {
   getNeighborhoods() {
     const currentNeighborhoods = [];
 
-    return this.state.tags
+    return this.state.addresses
         .map(tag => ({name: tag.neighborhood}))
         .filter(neighborhood => {
           if (currentNeighborhoods.includes(neighborhood.name)) {
@@ -92,6 +93,51 @@ export default class BaseView extends Component {
         });
   }
 
+  showAddresses() {
+    navigator.geolocation.getCurrentPosition(this.getAddressCoordinates.bind(this), () => {}, {maximumAge: 2000});
+  }
+
+  getAddressCoordinates(pos) {
+    Geocoder.setApiKey('AIzaSyD4Oan5v5glCpoKUNUN_AjckZ29YeETzV4');
+
+    Geocoder.getFromLatLng(pos.coords.latitude, pos.coords.longitude).then(
+      json => {
+        let addressAttributes = json.results[0].address_components.reduce((initialValue, component) => {
+          initialValue[component.types[0]] = component.long_name
+          return initialValue;
+        }, {});
+
+        let addresses = realm.objects('Address')
+          .filtered('street CONTAINS $0', addressAttributes.street_number)
+          .filtered('street CONTAINS $0', addressAttributes.route);
+
+        if(addresses.length > 0) {
+          this.setState({
+            queriedAddresses: addresses,
+          });
+
+          this.popupDialog.show();
+        } else {
+          this.navigateNewAddress();
+        }
+      },
+      error => {
+      }
+    );
+  }
+
+  navigateNewAddress() {
+    const resetAction = NavigationActions.reset({
+      index: 1,
+      actions: [
+        NavigationActions.navigate({ routeName: 'Home'}),
+        NavigationActions.navigate({ routeName: 'NewAddress'}),
+      ]
+    })
+
+    this.props.navigation.dispatch(resetAction);
+  }
+
   render() {
     const nextRoute = {
       component: TagPhoto,
@@ -99,18 +145,47 @@ export default class BaseView extends Component {
       passProps: { myProp: 'bar' }
     };
 
-    const neighborhoods = Array.from(new Set(this.state.tags.map(tag => ({name: tag.neighborhood}))));
     const { navigate } = this.props.navigation;
 
     return(
       <View style={{flex: 1, marginTop: 0}}>
+        <DialogComponent
+          height={400}
+          ref={(popupDialog) => { this.popupDialog = popupDialog; }}
+          actions={[<DialogButton key="add" text="Add Address" align="center" onPress={this.navigateNewAddress.bind(this)}/>]}
+        >
+          <DialogTitle title="Is it one of these addresses?" />
+          <DialogContent contentStyle={{flex: 5}}>
+            <View>
+              <FlatList
+                ItemSeparatorComponent={this.renderSeparator}
+                data={this.state.queriedAddresses}
+                renderItem={({item}) => {
+                    return (
+                      <Text 
+                        key={item.id} 
+                        style={styles.listItem}
+                        onPress={() => {
+                          this.popupDialog.dismiss();
+                          this.props.navigation.navigate('AddressView', {address: item})
+                        }}
+                      >
+                        {item.street}
+                      </Text> 
+                    )
+                  }
+                }
+              />
+            </View>
+          </DialogContent>
+        </DialogComponent>
         <View style={{flex: 14}}>
           <FlatList
             ItemSeparatorComponent={this.renderSeparator}
             data={this.getNeighborhoods()}
             renderItem={({item}) => {
                 return (
-                  <Text key={item.name} style={styles.listItem} onPress={() => {this.props.navigation.navigate('TagList', {neighborhood: item.name})}} >{item.name}</Text> 
+                  <Text key={item.name} style={styles.listItem} onPress={() => {this.props.navigation.navigate('AddressList', {neighborhood: item.name})}} >{item.name}</Text> 
                 )
               }
             }
@@ -123,10 +198,10 @@ export default class BaseView extends Component {
           barTintColor="black"
           >
           <TabNavigator.Item
-            title="Add Tag"
+            title="Add Address"
             renderIcon={() => <Icon name="ios-camera" size={30}
             style={{backgroundColor: '#00000000'}}
-            onPress={() => {navigate('TagPhoto');}}
+            onPress={this.showAddresses.bind(this)}
              />}
             >
           </TabNavigator.Item>
