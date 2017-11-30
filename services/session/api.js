@@ -16,20 +16,23 @@ const endPoints = {
 const fetchApi = (url, options, method, authentication) => {
   return auth0
     .auth
-    .passwordRealm({username: authentication.email, password: authentication.password, realm: "Username-Password-Authentication"})
+    .passwordRealm({
+      username: authentication.email,
+      password: authentication.password,
+      realm: 'Username-Password-Authentication',
+      scope: 'openid profile email address phone offline_access',
+    })
     .then(response => {
       return {
-        tokens: [
-          {
-            type: 'access',
+        tokens: {
+          access: {
             value: response.accessToken,
             expiresIn: response.expiresIn,
           }, 
-          {
-            type: 'refresh',
-            value: 'refresh',
+          refresh: {
+            value: response.refreshToken,
           }
-        ],
+        },
       };
     });
 }
@@ -43,17 +46,15 @@ export const getUserInfo = () =>
 export const logOut = () => {
   return new Promise((resolve, reject) => {
     resolve({
-      tokens: [
-        {
-          type: 'access',
+      tokens: {
+        access: {
           value: null,
           expiresIn: null,
         },
-        {
-          type: 'refresh',
+        refresh: {
           value: null,
         }
-      ],
+      },
       user: {
         id: null
       }
@@ -63,9 +64,22 @@ export const logOut = () => {
 
 export const authenticate = (email, password) => fetchApi(endPoints.authenticate, {}, 'post', { email, password });
 
-export const refresh = (token, user) => fetchApi(endPoints.refresh, { token, user }, 'post', {
-  'Client-ID': credentials.clientId,
-  Authorization: null,
-});
+export const refresh = (token, user) => auth0
+  .auth
+    .refreshToken({refreshToken: token})
+    .then(response => {
+      return {
+        tokens: {
+          access: {
+            value: response.accessToken,
+            expiresIn: response.expiresIn,
+          }, 
+          refresh: {
+            value: token,
+          }
+        },
+        user: store.getState().session.user,
+      };
+    });
 
 export const revoke = (tokens) => fetchApi(endPoints.revoke, { tokens }, 'post');

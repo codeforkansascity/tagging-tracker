@@ -1,14 +1,14 @@
 import { AsyncStorage } from 'react-native';
 import { createStore, combineReducers } from 'redux';
 import { persistStore, persistCombineReducers } from 'redux-persist'
+import storage from 'redux-persist/lib/storage';
 import sessionReducer from '../reducers/session';
 import networkReducer from '../reducers/network';
 
 const appReducer = persistCombineReducers(
   {
-    key: 'my_key',
-    storage: AsyncStorage,
-    blacklist: ['data'],
+    key: 'primary',
+    storage,
   },
   {
     session: sessionReducer,
@@ -18,5 +18,5 @@ const appReducer = persistCombineReducers(
 
 let store = createStore(appReducer);
 
-export const persist = persistStore(store);
+export const persistor = persistStore(store, () => (store.getState()));
 export default store;

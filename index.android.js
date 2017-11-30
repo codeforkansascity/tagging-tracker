@@ -9,76 +9,23 @@ import {
   AppRegistry,
   Text,
   NetInfo,
+  View,
 } from 'react-native';
 
+import { PersistGate } from 'redux-persist/es/integration/react'
 import { Provider } from 'react-redux';
 import { StackNavigator } from 'react-navigation';
 
-import BaseView from './components/BaseView';
-import TagPhoto from './components/TagPhoto';
-import NewTagData from './components/NewTagData';
-import AddressList from './components/AddressList';
-import AddressView from './components/AddressView';
-import NewAddress from './components/NewAddress';
-import TagList from './components/TagList';
-import TagView from './components/TagView';
-import Login from './components/Login';
-import store from './store';
-import networkActions from './services/network/actions';
+import store, { persistor } from './store';
+import App from './components/App';
 
-const initialRoute = store.getState().session.user.id ? 'Login' : 'Home';
-
-const StackNavigation = StackNavigator({
-  Home: { screen: BaseView },
-  TagPhoto: { screen: TagPhoto },
-  NewTagData: { screen: NewTagData },
-  NewAddress: { screen: NewAddress },
-  AddressList: { screen: AddressList },
-  AddressView: { screen: AddressView },
-  TagList: { screen: TagList },
-  TagView: { screen: TagView },
-  Login: { screen: Login },
-}, {
-  initialRouteName: initialRoute,
-  navigationOptions: {
-    headerTintColor: '#ffffff',
-    headerStyle: {
-      backgroundColor: '#000000',
-    }
-  }
-});
-
-export default class TaggingTracker extends Component {
-  componentDidMount() {
-    NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectionChange.bind(this));
-  }
-
-  componentWillUnmount() {
-    NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectionChange.bind(this));
-  }
-
-  handleConnectionChange(isConnected) {
-    store.dispatch(networkActions.connectionState({ status: isConnected }));
-    let actionQueue = store.getState().network.queue
-
-    if(isConnected && actionQueue.length > 0) {
-      actionQueue.forEach((request) => {
-        if(request) {
-          request();
-        }
-
-        store.dispatch(networkActions.removeFromQueue({request}))
-      });
-    }
-  }
-
-  render() {
-    return(
-      <Provider store={store}>
-        <StackNavigation />
-      </Provider>
-    );
-  }
-}
-
+export default TaggingTracker = () => 
+  <Provider store={store}>
+    <PersistGate
+      loading={<View><Text>Loading</Text></View>}
+      persistor={persistor}>
+      <App />
+    </PersistGate>
+  </Provider>
+  
 AppRegistry.registerComponent('TaggingTracker', () => TaggingTracker);

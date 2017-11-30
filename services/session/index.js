@@ -9,7 +9,6 @@ const SESSION_TIMEOUT_THRESHOLD = 300; // Will refresh the access token 5 minute
 let sessionTimeout = null;
 
 const setSessionTimeout = (duration) => {
-  clearTimeout(sessionTimeout);
   sessionTimeout = setTimeout(
     refreshToken,
     (duration - SESSION_TIMEOUT_THRESHOLD) * 1000
@@ -22,11 +21,8 @@ const clearSession = () => {
 };
 
 const onRequestSuccess = (response) => {
-  const tokens = response.tokens.reduce((prev, item) => ({
-    ...prev,
-    [item.type]: item,
-  }), {});
-  store.dispatch(actionCreators.update({ tokens, user: response.user }));
+  const { tokens, user } = response;
+  store.dispatch(actionCreators.update({ tokens, user }));
   setSessionTimeout(tokens.access.expiresIn);
 };
 
@@ -48,7 +44,7 @@ export const refreshToken = () => {
     return Promise.reject();
   }
 
-  return api.refresh(session.tokens.refresh, session.user)
+  return api.refresh(session.tokens.refresh.value)
     .then(onRequestSuccess)
     .catch(onRequestFailed);
 };
