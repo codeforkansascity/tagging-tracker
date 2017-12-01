@@ -22,6 +22,8 @@ Address.schema = {
         tenant_name: {type: 'string', optional: true},
         tenant_phone: {type: 'string', optional: true},
         tenant_email: {type: 'string', optional: true},
+        latitude: {type: 'float', optional: false},
+        longitude: {type: 'float', optional: false},
         follow_up_owner_needed: {type: 'bool', optional: true},
     },
 };

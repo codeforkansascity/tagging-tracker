@@ -25,11 +25,11 @@ import TagView from './TagView';
 import Login from './Login';
 import store from '../store';
 import networkActions from '../services/network/actions';
+import { uploadSavedTasks } from '../services/tagging_tracker/offline_upload';
 
 export default class TaggingTracker extends Component {
   componentDidMount() {
     NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectionChange.bind(this));
-    NetInfo.isConnected.fetch().then(this.handleConnectionChange.bind(this));
   }
 
   componentWillUnmount() {
@@ -38,16 +38,9 @@ export default class TaggingTracker extends Component {
 
   handleConnectionChange(isConnected) {
     store.dispatch(networkActions.connectionState({ status: isConnected }));
-    let actionQueue = store.getState().network.queue;
 
-    if(isConnected && actionQueue.length > 0) {
-      actionQueue.forEach((request) => {
-        if(request) {
-          request();
-        }
-
-        store.dispatch(networkActions.removeFromQueue({request}))
-      });
+    if(isConnected) {
+      uploadSavedTasks();
     }
   }
 

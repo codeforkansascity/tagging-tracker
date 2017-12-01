@@ -16,11 +16,15 @@ import {
 
 
 import Geocoder from 'react-native-geocoding';
-import { SegmentedControls } from 'react-native-radio-buttons'
+import { SegmentedControls } from 'react-native-radio-buttons';
+import { NavigationActions } from 'react-navigation';
+import axios from 'axios';
 
 import BaseView from './BaseView';
 import realm from '../realm';
-import { NavigationActions } from 'react-navigation'
+import store from '../store';
+import networkActions from '../services/network/actions';
+import taggingTrackerActions from '../services/tagging_tracker/actions';
 
 const win = Dimensions.get('window');
 
@@ -36,7 +40,7 @@ const optionDisplays = [
   'Public',
 ];
 
-export default class NewTagData extends Component {
+export default class NewAddress extends Component {
   static navigationOptions = ({navigation}) => {
     let navigationOptions = { headerTitle: 'New Address' };
     const { state } = navigation;
@@ -101,11 +105,14 @@ export default class NewTagData extends Component {
   }
 
   submitForm() {
-    const TagParams = Object.assign({}, this.state);
-    TagParams.date_updated = new Date();
+    const addressParams = Object.assign({}, this.state);
+    addressParams.date_updated = new Date();
+    addressParams.longitude = this.state.longitude;
+    addressParams.latitude = this.state.latitude;
 
     realm.write(() => {
-      realm.create('Address', TagParams);
+      const address = realm.create('Address', addressParams);
+      store.dispatch(taggingTrackerActions.addToQueue({request: {action: 'UPLOAD', type: 'Address', entity: address}}));
     });
 
     const resetAction = NavigationActions.reset({
