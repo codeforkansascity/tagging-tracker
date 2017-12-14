@@ -11,11 +11,13 @@ import {
   ListItem,
 } from 'react-native';
 
+import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
 import TabNavigator from 'react-native-tab-navigator';
 import { DialogComponent, DialogTitle, DialogContent, DialogButton } from 'react-native-dialog-component';
 import Geocoder from 'react-native-geocoding';
-import { NavigationActions } from 'react-navigation'
+import { NavigationActions } from 'react-navigation';
+import Config from 'react-native-config';
 
 import TagPhoto from './TagPhoto';
 import TagList from './TagList';
@@ -37,15 +39,48 @@ export default class BaseView extends Component {
       neighborhoods: [],
       addresses: [],
       queriedAddresses: [],
+      isLoading: false,
     };
+
+    this.fetchAddresses = this.fetchAddresses.bind(this);
   }
 
   componentWillMount() {
-    let addresses = realm.objects('Address');
+    this.fetchAddresses();
+  }
 
+  fetchAddresses() {
     this.setState({
-      addresses
+      addresses: [],
+      isLoading: true
     });
+
+    axios.get(`${Config.TAGGING_TRACKER_SERVICE_DOMAIN}/address/`)
+      .then(response => {
+        realm.write(() => {
+          realm.delete(realm.objects('Address'));
+
+          response.data.features.forEach((address) => {
+            let addressAttributes = Object.assign({}, address.properties);
+            addressAttributes.longitude = address.geometry.coordinates[0];
+            addressAttributes.latitude = address.geometry.coordinates[1];
+            addressAttributes.date_updated = new Date(addressAttributes.date_updated);
+            realm.create('Address', addressAttributes);
+          });
+
+          let addresses = realm.objects('Address');
+
+          this.setState({
+            addresses,
+            isLoading: false,
+          });
+        })
+      }).catch(error => {
+        this.setState({
+          addresses: realm.objects('Address'),
+          isLoading: false,
+        });
+      });
   }
 
   alphabetizeNeighborhoods(a, b) {
@@ -107,8 +142,16 @@ export default class BaseView extends Component {
           return initialValue;
         }, {});
 
+        if (!addressAttributes.street_number) {
+          addressAttributes.street_number = '';
+        }
+
+        if (!addressAttributes.route) {
+          addressAttributes.route = '';
+        }
+
         let addresses = realm.objects('Address')
-          .filtered('street CONTAINS $0', addressAttributes.street_number)
+          .filtered('street CONTAINS $0', addressAttributes.street_number || '')
           .filtered('street CONTAINS $0', addressAttributes.route);
 
         if(addresses.length > 0) {
@@ -183,6 +226,8 @@ export default class BaseView extends Component {
           <FlatList
             ItemSeparatorComponent={this.renderSeparator}
             data={this.getNeighborhoods()}
+            refreshing={this.state.isLoading}
+            onRefresh={this.fetchAddresses}
             renderItem={({item}) => {
                 return (
                   <Text key={item.name} style={styles.listItem} onPress={() => {this.props.navigation.navigate('AddressList', {neighborhood: item.name})}} >{item.name}</Text> 
