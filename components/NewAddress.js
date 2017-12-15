@@ -92,9 +92,19 @@ export default class NewAddress extends Component {
           return initialValue;
         }, {});
 
+        let street = '';
+
+        if(addressAttributes.street_number && addressAttributes.route) {
+          street = `${addressAttributes.street_number} ${addressAttributes.route}`
+        } else if (addressAttributes.street_number) {
+          street = addressAttributes.street_number;
+        } else if (addressAttributes.route) {
+          street = addressAttributes.route;
+        }
+
         this.setState({
           neighborhood: addressAttributes.neighborhood,
-          street: `${addressAttributes.street_number} ${addressAttributes.route}`,
+          street,
           city: addressAttributes.locality,
           state: addressAttributes.administrative_area_level_1,
           zip: addressAttributes.postal_code,
