@@ -134,6 +134,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-fetch-blob')
     compile project(':react-native-auth0')
     compile project(':react-native-config')
     compile project(':realm')

@@ -3,6 +3,7 @@ package com.taggingtracker;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.RNFetchBlob.RNFetchBlobPackage;
 import com.auth0.react.A0Auth0Package;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import io.realm.react.RealmReactPackage;
@@ -28,6 +29,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNFetchBlobPackage(),
             new A0Auth0Package(),
             new ReactNativeConfigPackage(),
             new RealmReactPackage(),

@@ -20,6 +20,7 @@ import Geocoder from 'react-native-geocoding';
 
 import BaseView from './BaseView';
 import realm from '../realm';
+import AzureImageUpload from '../util/AzureImageUpload';
 import { NavigationActions } from 'react-navigation'
 
 const win = Dimensions.get('window');
@@ -64,28 +65,37 @@ export default class NewTagData extends Component {
   componentDidMount() {
     this.setState({
       neighborhood: this.props.navigation.state.params.address.neighborhood,
-    })
+    });
   }
 
   submitForm() {
     const { address } = this.props.navigation.state.params;
     const tagParams = Object.assign({}, this.state);
-    tagParams.img = this.props.navigation.state.params.imgData.path;
+    const imagePath = this.props.navigation.state.params.imgData.path;
 
-    realm.write(() => {
-      address.tags.push(tagParams);
-    });
+    if(!tagParams.description) {
+      alert('Description must be filled out');
+      return;
+    }
 
-    const addressViewReRoute = NavigationActions.reset({
-      index: 2,
-      actions: [
-        NavigationActions.navigate({ routeName: 'Home'}),
-        NavigationActions.navigate({ routeName: 'AddressList', params: {neighborhood: address.neighborhood}}),
-        NavigationActions.navigate({ routeName: 'AddressView', params: {address}}),
-      ]
-    })
+    AzureImageUpload.uploadImage(imagePath)
+      .then(response => {
+        realm.write(() => {
+          tagParams.img = response.name;
+          address.tags.push(tagParams);
+        });
 
-    this.props.navigation.dispatch(addressViewReRoute);
+        const addressViewReRoute = NavigationActions.reset({
+          index: 2,
+          actions: [
+            NavigationActions.navigate({ routeName: 'Home'}),
+            NavigationActions.navigate({ routeName: 'AddressList', params: {neighborhood: address.neighborhood}}),
+            NavigationActions.navigate({ routeName: 'AddressView', params: {address}}),
+          ]
+        })
+
+        this.props.navigation.dispatch(addressViewReRoute);
+      });
   }
 
   render() {
