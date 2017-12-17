@@ -14,7 +14,6 @@ import {
   Platform,
 } from 'react-native';
 
-import Camera from 'react-native-camera';
 import Icon from 'react-native-vector-icons/Ionicons';
 import TabNavigator from 'react-native-tab-navigator';
 import { NavigationActions } from 'react-navigation'
@@ -49,7 +48,7 @@ export default class TagView extends Component {
     return options;
   };
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.navigation.setParams({ deleteAddressPrompt: this.deleteAddressPrompt.bind(this), ...this.props.navigation.params });
   }
 

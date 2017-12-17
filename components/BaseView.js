@@ -18,6 +18,7 @@ import { DialogComponent, DialogTitle, DialogContent, DialogButton } from 'react
 import Geocoder from 'react-native-geocoding';
 import { NavigationActions } from 'react-navigation';
 import Config from 'react-native-config';
+import shortid from 'shortid';
 
 import TagPhoto from './TagPhoto';
 import TagList from './TagList';
@@ -46,7 +47,14 @@ export default class BaseView extends Component {
   }
 
   componentWillMount() {
-    this.fetchAddresses();
+    if (this.props.navigation.state.params && this.props.navigation.state.params.initializingApp) {
+      this.fetchAddresses();
+    } else {
+      this.setState({
+        addresses: realm.objects('Address'),
+        isLoading: false,
+      });
+    }
   }
 
   fetchAddresses() {
@@ -199,7 +207,7 @@ export default class BaseView extends Component {
               <FlatList
                 ItemSeparatorComponent={this.renderSeparator}
                 data={this.state.queriedAddresses}
-                keyExtractor={item => item.id}
+                keyExtractor={item => shortid.generate()}
                 renderItem={({item}) => {
                     return (
                       <Text 

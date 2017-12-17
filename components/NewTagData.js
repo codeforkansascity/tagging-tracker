@@ -69,7 +69,7 @@ export default class NewTagData extends Component {
   }
 
   submitForm() {
-    const { address } = this.props.navigation.state.params;
+    let { address } = this.props.navigation.state.params;
     const tagParams = Object.assign({}, this.state);
     const imagePath = this.props.navigation.state.params.imgData.path;
 

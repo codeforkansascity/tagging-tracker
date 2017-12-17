@@ -15,10 +15,11 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
+import shortid from 'shortid';
 
 import TagPhoto from './TagPhoto';
 import realm from '../realm';
-import TagView from './TagView'
+import TagView from './TagView';
 
 export default class TagList extends Component {
   static navigationOptions = ({navigation}) => {
@@ -62,6 +63,7 @@ export default class TagList extends Component {
           <FlatList
             ItemSeparatorComponent={this.renderSeparator}
             data={this.state.tags}
+            keyExtractor={item => shortid.generate()}
             renderItem={({item}) => {
                 return (
                   <View style={styles.listItem}>

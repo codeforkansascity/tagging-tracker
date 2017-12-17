@@ -47,6 +47,7 @@ export default class TaggingTracker extends Component {
   render() {
     const { access } = store.getState().session.tokens;
     const initialRouteName = access && access.value ? 'Home' : 'Login';
+    const initialRouteParams = { initializingApp: true };
 
     const StackNavigation = StackNavigator({
       Home: { screen: BaseView },
@@ -60,6 +61,7 @@ export default class TaggingTracker extends Component {
       Login: { screen: Login },
     }, {
       initialRouteName,
+      initialRouteParams,
       navigationOptions: {
         headerTintColor: '#ffffff',
         headerStyle: {
