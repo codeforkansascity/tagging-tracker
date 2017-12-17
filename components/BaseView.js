@@ -109,10 +109,6 @@ export default class BaseView extends Component {
     );
   };
 
-  keyExtractor(item, index) {
-    return item.id;
-  }
-
   getNeighborhoods() {
     const currentNeighborhoods = [];
 
@@ -203,6 +199,7 @@ export default class BaseView extends Component {
               <FlatList
                 ItemSeparatorComponent={this.renderSeparator}
                 data={this.state.queriedAddresses}
+                keyExtractor={item => item.id}
                 renderItem={({item}) => {
                     return (
                       <Text 
@@ -230,11 +227,11 @@ export default class BaseView extends Component {
             onRefresh={this.fetchAddresses}
             renderItem={({item}) => {
                 return (
-                  <Text key={item.name} style={styles.listItem} onPress={() => {this.props.navigation.navigate('AddressList', {neighborhood: item.name})}} >{item.name}</Text> 
+                  <Text style={styles.listItem} onPress={() => {this.props.navigation.navigate('AddressList', {neighborhood: item.name})}} >{item.name}</Text>
                 )
               }
             }
-            keyExtractor={this.keyExtractor}
+            keyExtractor={item => item.name}
           />
         </View>
         <TabNavigator
