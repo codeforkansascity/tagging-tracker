@@ -116,13 +116,17 @@ export default class NewAddress extends Component {
 
   submitForm() {
     const addressParams = Object.assign({}, this.state);
+    const userId = store.getState().session.user.id;
     addressParams.date_updated = new Date();
+    addressParams.creator_user_id = userId;
+    addressParams.last_updated_user_id = userId;
     addressParams.longitude = this.state.longitude;
     addressParams.latitude = this.state.latitude;
 
     realm.write(() => {
       const address = realm.create('Address', addressParams);
-      store.dispatch(taggingTrackerActions.addToQueue({request: {action: 'UPLOAD', type: 'Address', entity: address}}));
+      const request = { action: 'UPLOAD', type: 'Address', entity: address.serviceProperties };
+      store.dispatch(taggingTrackerActions.addToQueue({ request }));
     });
 
     const resetAction = NavigationActions.reset({

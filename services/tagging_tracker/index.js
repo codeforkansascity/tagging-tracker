@@ -3,33 +3,20 @@ import Config from 'react-native-config'
 
 import store from '../../store';
 
-const createAddressParams = (addressParams) => {
-  let additonalParams = {
-    point: {
-      type: 'Point',
-      coordinates: [addressParams.longitude, addressParams.latitude],
-    },
-  };
-
-  return Object.assign(addressParams, additonalParams);
-}
-
-export const uploadAddress = (addressParams) =>(
+export const uploadAddress = (address) => (
   axios.post(`${Config.TAGGING_TRACKER_SERVICE_DOMAIN}/address/`,
-    createAddressParams(addressParams),
+    address,
     {
       headers: {'Authorization': store.getState().session.tokens.access.value},
     }
   )
 );
 
-export const uploadTag = (tagParams) => {
-  return (
-    axios.post(`${Config.TAGGING_TRACKER_SERVICE_DOMAIN}/tags/`,
-      tagParams,
-      {
-        headers: {'Authorization': store.getState().session.tokens.access.value},
-      }
-    )
+export const uploadTag = (tag) => (
+  axios.post(`${Config.TAGGING_TRACKER_SERVICE_DOMAIN}/tags/`,
+    tag,
+    {
+      headers: {'Authorization': store.getState().session.tokens.access.value},
+    }
   )
-}
+);

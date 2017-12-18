@@ -92,11 +92,12 @@ export default class NewTagData extends Component {
           tagParams.img = response.name;
           tagParams.creator_user_id = userId;
           tagParams.last_updated_user_id = userId;
+          tagParams.address = address;
           address.tags.push(tagParams);
+          let tag = address.tags[address.tags.length - 1];
+          let request = { action: 'UPLOAD', type: 'Tag', entity: tag.serviceProperties };
 
-          const serviceParams = Object.assign({}, tagParams);
-          serviceParams.address = address.id;
-          store.dispatch(taggingTrackerActions.addToQueue({request: {action: 'UPLOAD', type: 'Tag', entity: serviceParams}}));
+          store.dispatch(taggingTrackerActions.addToQueue({ request }));
         });
 
         const addressViewReRoute = NavigationActions.reset({
