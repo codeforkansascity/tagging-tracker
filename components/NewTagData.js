@@ -17,11 +17,14 @@ import {
 import Camera from 'react-native-camera';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Geocoder from 'react-native-geocoding';
+import { NavigationActions } from 'react-navigation';
 
 import BaseView from './BaseView';
 import realm from '../realm';
 import AzureImageUpload from '../util/AzureImageUpload';
-import { NavigationActions } from 'react-navigation'
+import store from '../store';
+import networkActions from '../services/network/actions';
+import taggingTrackerActions from '../services/tagging_tracker/actions';
 
 const win = Dimensions.get('window');
 
@@ -45,6 +48,7 @@ export default class NewTagData extends Component {
       img: 'string',
       crossed_out: false,
       date_taken: new Date(),
+      date_updated: new Date(),
       gang_related: false,
       neighborhood: '',
       racially_motivated: false,
@@ -63,8 +67,11 @@ export default class NewTagData extends Component {
   }
 
   componentDidMount() {
+    const address = this.props.navigation.state.params.address;
+
     this.setState({
-      neighborhood: this.props.navigation.state.params.address.neighborhood,
+      neighborhood: address.neighborhood,
+      address_id: address.id,
     });
   }
 
@@ -81,8 +88,15 @@ export default class NewTagData extends Component {
     AzureImageUpload.uploadImage(imagePath)
       .then(response => {
         realm.write(() => {
+          let userId = store.getState().session.user.id;
           tagParams.img = response.name;
+          tagParams.creator_user_id = userId;
+          tagParams.last_updated_user_id = userId;
           address.tags.push(tagParams);
+
+          const serviceParams = Object.assign({}, tagParams);
+          serviceParams.address = address.id;
+          store.dispatch(taggingTrackerActions.addToQueue({request: {action: 'UPLOAD', type: 'Tag', entity: serviceParams}}));
         });
 
         const addressViewReRoute = NavigationActions.reset({

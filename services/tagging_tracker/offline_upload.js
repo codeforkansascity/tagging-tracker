@@ -1,5 +1,5 @@
 import taggingTrackerActions from './actions';
-import { uploadAddress } from '.';
+import { uploadAddress, uploadTag } from '.';
 import store from '../../store';
 
 export const uploadSavedTasks = () => {
@@ -9,6 +9,8 @@ export const uploadSavedTasks = () => {
     if(task) {
       if(task.action === 'UPLOAD' && task.type === 'Address') {
         uploadAddress(task.entity);
+      } else if (task.action === 'UPLOAD' && task.type === 'Tag') {
+        uploadTag(task.entity);
       }
     }
     

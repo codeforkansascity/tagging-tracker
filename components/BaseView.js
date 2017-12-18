@@ -70,6 +70,7 @@ export default class BaseView extends Component {
 
           response.data.features.forEach((address) => {
             let addressAttributes = Object.assign({}, address.properties);
+            addressAttributes.id = address.id.toString();
             addressAttributes.longitude = address.geometry.coordinates[0];
             addressAttributes.latitude = address.geometry.coordinates[1];
             addressAttributes.date_updated = new Date(addressAttributes.date_updated);

@@ -22,3 +22,14 @@ export const uploadAddress = (addressParams) =>(
     }
   )
 );
+
+export const uploadTag = (tagParams) => {
+  return (
+    axios.post(`${Config.TAGGING_TRACKER_SERVICE_DOMAIN}/tags/`,
+      tagParams,
+      {
+        headers: {'Authorization': store.getState().session.tokens.access.value},
+      }
+    )
+  )
+}
