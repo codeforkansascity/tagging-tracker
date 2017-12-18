@@ -33,9 +33,8 @@ export default class TagPhoto extends Component {
   }
 
   takePicture() {
-    const { navigate } = this.props.navigation;
-    const { address } = this.props.navigation.state.params;
-    const options = {};
+    const { navigate, state } = this.props.navigation;
+    const { address, neighborhood } = state.params;
 
     this.camera.capture()
       .then((data) => {
@@ -44,6 +43,7 @@ export default class TagPhoto extends Component {
           {
             imgData: data,
             address,
+            neighborhood
           }
         );
       })

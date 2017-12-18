@@ -27,10 +27,6 @@ export default class AddressList extends Component {
     };
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   componentWillMount() {
     const { neighborhood } = this.props.navigation.state.params;
     let addresses = realm.objects('Address').filtered('neighborhood = $0', neighborhood);
@@ -65,7 +61,7 @@ export default class AddressList extends Component {
             renderItem={({item}) => {
                 return (
                   <View style={styles.listItem}>
-                    <Text style={{alignContent: 'center', textAlignVertical: 'center'}} onPress={() => {this.props.navigation.navigate('AddressView', {address: item})}} >
+                    <Text style={{alignContent: 'center', textAlignVertical: 'center'}} onPress={() => {this.props.navigation.navigate('AddressView', {addressId: item.id})}} >
                       {item.street}
                     </Text>
                   </View>

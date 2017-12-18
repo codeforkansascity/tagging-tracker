@@ -21,7 +21,6 @@ import Config from 'react-native-config';
 import shortid from 'shortid';
 
 import TagPhoto from './TagPhoto';
-import TagList from './TagList';
 import realm from '../realm';
 import store from '../store';
 
@@ -42,54 +41,13 @@ export default class BaseView extends Component {
       queriedAddresses: [],
       isLoading: false,
     };
-
-    this.fetchAddresses = this.fetchAddresses.bind(this);
   }
 
   componentWillMount() {
-    if (this.props.navigation.state.params && this.props.navigation.state.params.initializingApp) {
-      this.fetchAddresses();
-    } else {
-      this.setState({
-        addresses: realm.objects('Address'),
-        isLoading: false,
-      });
-    }
-  }
-
-  fetchAddresses() {
     this.setState({
-      addresses: [],
-      isLoading: true
+      addresses: realm.objects('Address'),
+      isLoading: false,
     });
-
-    axios.get(`${Config.TAGGING_TRACKER_SERVICE_DOMAIN}/address/`)
-      .then(response => {
-        realm.write(() => {
-          realm.delete(realm.objects('Address'));
-
-          response.data.features.forEach((address) => {
-            let addressAttributes = Object.assign({}, address.properties);
-            addressAttributes.id = address.id.toString();
-            addressAttributes.longitude = address.geometry.coordinates[0];
-            addressAttributes.latitude = address.geometry.coordinates[1];
-            addressAttributes.date_updated = new Date(addressAttributes.date_updated);
-            realm.create('Address', addressAttributes);
-          });
-
-          let addresses = realm.objects('Address');
-
-          this.setState({
-            addresses,
-            isLoading: false,
-          });
-        })
-      }).catch(error => {
-        this.setState({
-          addresses: realm.objects('Address'),
-          isLoading: false,
-        });
-      });
   }
 
   alphabetizeNeighborhoods(a, b) {
@@ -216,7 +174,7 @@ export default class BaseView extends Component {
                         style={styles.listItem}
                         onPress={() => {
                           this.popupDialog.dismiss();
-                          this.props.navigation.navigate('AddressView', {address: item})
+                          this.props.navigation.navigate('AddressView', {addressId: item.id})
                         }}
                       >
                         {item.street}

@@ -12,9 +12,9 @@ class Address {
             zip: 'string',
             latitude: 'double',
             longitude: 'double',
-            tags: {type: 'list', objectType: 'Tag'},
             date_updated: 'date',
             type_of_property: 'int',
+            uploaded_online: 'bool',
             land_bank_property: {type: 'bool', optional: true},
             owner_name: {type: 'string', optional: true},
             owner_contact_number: {type: 'string', optional: true},
@@ -38,6 +38,7 @@ class Address {
             coordinates: [properties.longitude, properties.latitude]
         };
 
+        delete properties['id'];
         delete properties['longitude'];
         delete properties['latitude'];
         return properties;

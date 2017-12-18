@@ -19,11 +19,14 @@ import Geocoder from 'react-native-geocoding';
 import { SegmentedControls } from 'react-native-radio-buttons';
 import { NavigationActions } from 'react-navigation';
 import axios from 'axios';
+import shortid from 'shortid';
 
 import BaseView from './BaseView';
 import realm from '../realm';
 import store from '../store';
 import networkActions from '../services/network/actions';
+import * as networkSelectors from '../services/network/selectors';
+import { uploadAddress } from '../services/tagging_tracker';
 import taggingTrackerActions from '../services/tagging_tracker/actions';
 
 const win = Dimensions.get('window');
@@ -75,6 +78,8 @@ export default class NewAddress extends Component {
       tenant_email: '',
       follow_up_owner_needed: false,
     };
+
+    this.navigateOnSubmit = this.navigateOnSubmit.bind(this);
   }
 
   componentWillMount() {
@@ -115,20 +120,39 @@ export default class NewAddress extends Component {
   }
 
   submitForm() {
+    let address;
+
     const addressParams = Object.assign({}, this.state);
     const userId = store.getState().session.user.id;
+    addressParams.id = shortid.generate();
     addressParams.date_updated = new Date();
     addressParams.creator_user_id = userId;
     addressParams.last_updated_user_id = userId;
+    addressParams.uploaded_online = false;
     addressParams.longitude = this.state.longitude;
     addressParams.latitude = this.state.latitude;
 
     realm.write(() => {
-      const address = realm.create('Address', addressParams);
-      const request = { action: 'UPLOAD', type: 'Address', entity: address.serviceProperties };
-      store.dispatch(taggingTrackerActions.addToQueue({ request }));
+      address = realm.create('Address', addressParams);
     });
 
+    if(networkSelectors.get().isConnected) {
+      uploadAddress(address.serviceProperties)
+        .then(response => {
+          realm.write(() => {
+            address.id = response.id;
+            address.uploaded_online = true;
+          });
+        })
+        .then(this.navigateOnSubmit);
+    } else {
+      const request = { action: 'UPLOAD', type: 'Address', entity: address.serviceProperties };
+      store.dispatch(taggingTrackerActions.addToQueue({ request }));
+      this.navigateOnSubmit();
+    }
+  }
+
+  navigateOnSubmit() {
     const resetAction = NavigationActions.reset({
       index: 0,
       actions: [

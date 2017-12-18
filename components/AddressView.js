@@ -25,11 +25,11 @@ import IOSDivider from './ios/Divider';
 
 const win = Dimensions.get('window');
 
-export default class TagView extends Component {
+export default class AddressView extends Component {
   static navigationOptions = ({navigation}) => {
     let options = {}
 
-    options.title = navigation.state.params.address.street;
+    options.title = navigation.state.params.address && navigation.state.params.address.street;
     options.headerRight =
       <Icon style={
           {
@@ -48,8 +48,18 @@ export default class TagView extends Component {
     return options;
   };
 
-  componentDidMount() {
-    this.props.navigation.setParams({ deleteAddressPrompt: this.deleteAddressPrompt.bind(this), ...this.props.navigation.params });
+  componentWillMount() {
+    let address = realm.objects('Address').filtered('id = $0', this.props.navigation.state.params.addressId);
+
+    if (address) {
+      address = address[0];
+    }
+
+    this.props.navigation.setParams({
+      deleteAddressPrompt: this.deleteAddressPrompt.bind(this),
+      address,
+      ...this.props.navigation.params
+    });
   }
 
   deleteAddressPrompt() {
@@ -65,11 +75,11 @@ export default class TagView extends Component {
   }
 
   deleteAddress() {
-    const { address } = this.props.navigation.state.params;
+    const { addressId } = this.props.navigation.state.params;
     const neighborhood = address.neighborhood;
 
     realm.write(() => {
-      realm.delete(address.tags);
+      realm.delete(realm.objects('Tag').filtered('address = $0', addressId));
       realm.delete(address);
     });
 
@@ -88,7 +98,7 @@ export default class TagView extends Component {
     const { navigate, state } = this.props.navigation;
     const { address } = state.params;
 
-    navigate('TagPhoto', {address});
+    navigate('TagPhoto', { address: address.id, neighborhood: address.neighborhood });
   }
 
   deleteTagConfirm(tag) {
@@ -104,8 +114,6 @@ export default class TagView extends Component {
   }
 
   deleteTag(tag) {
-    const { address } = this.props.navigation.state.params;
-
     realm.write(() => {
       realm.delete(tag);
       this.forceUpdate();
@@ -153,7 +161,7 @@ export default class TagView extends Component {
   }
 
   render() {
-    const { address } = this.props.navigation.state.params;
+    const { addressId } = this.props.navigation.state.params;
     const stylesHash = {
       mainTitle: {
         fontSize: 34,
@@ -172,12 +180,13 @@ export default class TagView extends Component {
 
 
     const styles = StyleSheet.create(stylesHash);
-    let tags = address.tags;
+    let tags = realm.objects('Tag').filtered('address = $0', addressId);
 
     return (
       <View style={{flex: 1}}>
-        <ScrollView>  
-        {tags.map(this.renderTagComponent.bind(this))}
+        <ScrollView>
+          {tags.map(this.renderTagComponent.bind(this))}
+          <View style={{height: 50}}></View>
         </ScrollView>
         <TabNavigator
           unselectedTintColor="yellow"

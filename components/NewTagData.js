@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  ActivityIndicator,
   AppRegistry,
   StyleSheet,
   Text,
@@ -25,6 +26,8 @@ import AzureImageUpload from '../util/AzureImageUpload';
 import store from '../store';
 import networkActions from '../services/network/actions';
 import taggingTrackerActions from '../services/tagging_tracker/actions';
+import * as networkSelectors from '../services/network/selectors';
+import { uploadTag } from '../services/tagging_tracker';
 
 const win = Dimensions.get('window');
 
@@ -67,71 +70,102 @@ export default class NewTagData extends Component {
   }
 
   componentDidMount() {
-    const address = this.props.navigation.state.params.address;
+    const { address, neighborhood }  = this.props.navigation.state.params;
 
     this.setState({
-      neighborhood: address.neighborhood,
-      address_id: address.id,
+      neighborhood,
+      address,
     });
   }
 
   submitForm() {
+    let tag;
     let { address } = this.props.navigation.state.params;
     const tagParams = Object.assign({}, this.state);
     const imagePath = this.props.navigation.state.params.imgData.path;
+    const userId = store.getState().session.user.id;
 
     if(!tagParams.description) {
       alert('Description must be filled out');
       return;
     }
 
-    AzureImageUpload.uploadImage(imagePath)
+    tagParams.img = imagePath;
+    tagParams.creator_user_id = userId;
+    tagParams.last_updated_user_id = userId;
+    tagParams.address = address.toString();
+    tagParams.uploaded_online = false;
+
+    realm.write(() => {
+      tag = realm.create('Tag', tagParams);
+    });
+
+    this.setState({
+      updating: true
+    });
+
+    if(networkSelectors.get().isConnected) {
+      AzureImageUpload.uploadImage(imagePath)
       .then(response => {
         realm.write(() => {
-          let userId = store.getState().session.user.id;
-          tagParams.img = response.name;
-          tagParams.creator_user_id = userId;
-          tagParams.last_updated_user_id = userId;
-          tagParams.address = address;
-          address.tags.push(tagParams);
-          let tag = address.tags[address.tags.length - 1];
-          let request = { action: 'UPLOAD', type: 'Tag', entity: tag.serviceProperties };
-
-          store.dispatch(taggingTrackerActions.addToQueue({ request }));
-        });
-
-        const addressViewReRoute = NavigationActions.reset({
-          index: 2,
-          actions: [
-            NavigationActions.navigate({ routeName: 'Home'}),
-            NavigationActions.navigate({ routeName: 'AddressList', params: {neighborhood: address.neighborhood}}),
-            NavigationActions.navigate({ routeName: 'AddressView', params: {address}}),
-          ]
+          tag.img = response.name;
         })
 
-        this.props.navigation.dispatch(addressViewReRoute);
-      });
+        return tag.serviceProperties;
+      })
+      .then(uploadTag)
+      .then(response => {
+        realm.write(() => {
+          tag.address = response.data.address.toString();
+          tag.uploaded_online = true;
+        })
+      })
+      .then(this.submitDataSuccessNavigation.bind(this));
+    } else {
+      let request = { action: 'UPLOAD', type: 'Tag', entity: tag.serviceProperties };
+      store.dispatch(taggingTrackerActions.addToQueue({ request }));
+      this.submitDataSuccessNavigation();
+    }
+  }
+
+  submitDataSuccessNavigation() {
+    const { address, neighborhood } = this.props.navigation.state.params;
+
+    const addressViewReRoute = NavigationActions.reset({
+      index: 2,
+      actions: [
+        NavigationActions.navigate({ routeName: 'Home', params: { initializingApp: false }}),
+        NavigationActions.navigate({ routeName: 'AddressList', params: { neighborhood }}),
+        NavigationActions.navigate({ routeName: 'AddressView', params: { addressId: address }}),
+      ]
+    });
+
+    this.props.navigation.dispatch(addressViewReRoute);
   }
 
   render() {
-    return (
-      <ScrollView style={{flex: 1}}>
-        <Image 
-          style={{width: win.width, height: 200}}
-          source={{uri: this.props.navigation.state.params.imgData.path}}
-        /> 
-        <View style={{padding: 20 }}>
-          <Text>Short Description</Text>
-          <TextInput style={styles.input} value={this.state.description} onChangeText={(description) => this.setState({description})} />
-          <Text>Square Footage</Text>
-          <TextInput style={styles.input} value={this.state.square_footage} onChangeText={(square_footage) => this.setState({square_footage})} />
-          <Text>Neighborhood</Text>
-          <TextInput style={styles.input} value={this.state.neighborhood} onChangeText={(neighborhood) => this.setState({neighborhood})} />
-          <Text>Describe the words of this Tag</Text>
-          <TextInput multiline={true} style={styles.input} value={this.state.tag_words} onChangeText={(tag_words) => this.setState({tag_words})} />
-        </View>
-      </ScrollView>
-    );
+    if(this.state.updating) {
+      return (<ActivityIndicator style={{flex: 1}} color="#000000" />);
+    } else {
+      return (
+        <ScrollView style={{flex: 1}}>
+          <Image
+            style={{width: win.width, height: 200}}
+            source={{uri: this.props.navigation.state.params.imgData.path}}
+          />
+          <View style={{padding: 20 }}>
+            <Text>Short Description</Text>
+            <TextInput style={styles.input} value={this.state.description} onChangeText={(description) => this.setState({description})} />
+            <Text>Square Footage</Text>
+            <TextInput style={styles.input} value={this.state.square_footage} onChangeText={(square_footage) => this.setState({square_footage})} />
+            <Text>Neighborhood</Text>
+            <TextInput style={styles.input} value={this.state.neighborhood} onChangeText={(neighborhood) => this.setState({neighborhood})} />
+            <Text>Describe the words of this Tag</Text>
+            <TextInput multiline={true} style={styles.input} value={this.state.tag_words} onChangeText={(tag_words) => this.setState({tag_words})} />
+          </View>
+        </ScrollView>
+      );
+    }
   }
 }
 
