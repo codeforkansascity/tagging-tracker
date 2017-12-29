@@ -46,6 +46,22 @@ export const fetchTags = () => (
     })
 );
 
+export const deleteAddress = (addressId) => (
+  axios.delete(`${Config.TAGGING_TRACKER_SERVICE_DOMAIN}/address/${addressId}`,
+    {
+      headers: {'Authorization': store.getState().session.tokens.access.value}
+    }
+  )
+);
+
+export const deleteTag = (tagId) => (
+  axios.delete(`${Config.TAGGING_TRACKER_SERVICE_DOMAIN}/tags/${tagId}`,
+    {
+      headers: {'Authorization': store.getState().session.tokens.access.value}
+    }
+  )
+);
+
 export const uploadAddress = (address) => (
   axios.post(`${Config.TAGGING_TRACKER_SERVICE_DOMAIN}/address/`,
     address,

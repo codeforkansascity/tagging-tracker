@@ -22,6 +22,10 @@ import realm from '../realm';
 import BaseView from './BaseView';
 import ItemCardView from './android/ItemCardView';
 import IOSDivider from './ios/Divider';
+import * as SessionSelectors from '../services/session/selectors';
+import * as NetworkSelectors from '../services/network/selectors';
+import { deleteAddress, deleteTag } from '../services/tagging_tracker';
+
 
 const win = Dimensions.get('window');
 
@@ -63,35 +67,42 @@ export default class AddressView extends Component {
   }
 
   deleteAddressPrompt() {
-    Alert.alert(
-      'Delete Address?',
-      null,
-      [
-        {text: 'Cancel', style: 'cancel'},
-        {text: 'Delete', onPress: this.deleteAddress.bind(this)},
-      ],
-      { cancelable: false }
-    );
+    if(NetworkSelectors.get().isConnected) {
+      Alert.alert(
+        'Delete Address?',
+        null,
+        [
+          {text: 'Cancel', style: 'cancel'},
+          {text: 'Delete', onPress: this.deleteCurrentAddress.bind(this)},
+        ],
+        { cancelable: false }
+      );
+    } else {
+      alert('You must be online to delete any data')
+    }
   }
 
-  deleteAddress() {
-    const { addressId } = this.props.navigation.state.params;
+  deleteCurrentAddress() {
+    const { address } = this.props.navigation.state.params;
     const neighborhood = address.neighborhood;
 
-    realm.write(() => {
-      realm.delete(realm.objects('Tag').filtered('address = $0', addressId));
-      realm.delete(address);
-    });
+    deleteAddress(address.id)
+      .then(() => {
+        realm.write(() => {
+          realm.delete(realm.objects('Tag').filtered('address = $0', address.id));
+          realm.delete(realm.objects('Address').filtered('id = $0', address.id));
+        });
 
-    const addressListing = NavigationActions.reset({
-      index: 1,
-      actions: [
-        NavigationActions.navigate({ routeName: 'Home'}),
-        NavigationActions.navigate({ routeName: 'AddressList', params: {neighborhood}}),
-      ]
-    })
+        const addressListing = NavigationActions.reset({
+          index: 1,
+          actions: [
+            NavigationActions.navigate({ routeName: 'Home'}),
+            NavigationActions.navigate({ routeName: 'AddressList', params: {neighborhood}}),
+          ]
+        })
 
-    this.props.navigation.dispatch(addressListing);
+        this.props.navigation.dispatch(addressListing);
+      });
   }
 
   addTag() {
@@ -102,22 +113,29 @@ export default class AddressView extends Component {
   }
 
   deleteTagConfirm(tag) {
-    Alert.alert(
-      'Delete Tag?',
-      null,
-      [
-        {text: 'Cancel', style: 'cancel'},
-        {text: 'Delete', onPress: () => {this.deleteTag(tag)}},
-      ],
-      { cancelable: false }
-    );
+    if(NetworkSelectors.get().isConnected) {
+      Alert.alert(
+        'Delete Tag?',
+        null,
+        [
+          {text: 'Cancel', style: 'cancel'},
+          {text: 'Delete', onPress: () => {this.deleteCurrentTag(tag)}},
+        ],
+        { cancelable: false }
+      );
+    } else {
+      alert('You must be online to delete any data')
+    }
   }
 
-  deleteTag(tag) {
-    realm.write(() => {
-      realm.delete(tag);
-      this.forceUpdate();
-    });
+  deleteCurrentTag(tag) {
+    deleteTag(tag.id)
+      .then(() => {
+        realm.write(() => {
+          realm.delete(tag);
+          this.forceUpdate();
+        });
+      });
   }
 
   renderTagComponent(tag) {
