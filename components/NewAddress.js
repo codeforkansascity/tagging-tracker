@@ -144,7 +144,10 @@ export default class NewAddress extends Component {
             address.uploaded_online = true;
           });
         })
-        .then(this.navigateOnSubmit);
+        .then(this.navigateOnSubmit)
+        .catch(error => {
+          alert('Address could not be saved. Please try again');
+        })
     } else {
       const request = { action: 'UPLOAD', type: 'Address', entity: address.serviceProperties };
       store.dispatch(taggingTrackerActions.addToQueue({ request }));
