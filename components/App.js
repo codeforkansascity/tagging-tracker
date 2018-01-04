@@ -8,12 +8,14 @@ import React, { Component } from 'react';
 import {
   ActivityIndicator,
   AppRegistry,
-  Text,
+  Platform,
   NetInfo,
+  Text,
 } from 'react-native';
 
 import { Provider } from 'react-redux';
 import { StackNavigator } from 'react-navigation';
+import Toast from 'react-native-simple-toast';
 
 import BaseView from './BaseView';
 import TagPhoto from './TagPhoto';
@@ -24,7 +26,11 @@ import NewAddress from './NewAddress';
 import TagView from './TagView';
 import Login from './Login';
 import store from '../store';
+import { getNetworkConnectionStatus } from '../services/network/api';
 import networkActions from '../services/network/actions';
+import * as SessionSelectors from '../services/session/selectors';
+import * as NetworkSelectors from '../services/network/selectors';
+import * as SessionMethods from '../services/session';
 import { uploadSavedTasks } from '../services/tagging_tracker/offline_upload';
 import { fetchAddresses, fetchTags } from '../services/tagging_tracker';
 
@@ -33,64 +39,102 @@ export default class TaggingTracker extends Component {
     super(props);
 
     this.state = {
-      fetchingData: true
+      fetchingData: true,
+      checkingConnection: true,
+      authenticating: true,
     };
+
+    this.initializeData = this.initializeData.bind(this);
+    this.handleConnectionChange = this.handleConnectionChange.bind(this);
   }
 
   componentDidMount() {
-    NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectionChange.bind(this));
+    NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectionChange);
 
-    fetchAddresses()
-      .then(fetchTags)
-      .then(response => {
-        this.setState({
-          fetchingData: false
+    getNetworkConnectionStatus()
+      .then(this.initializeData)
+  }
+
+  initializeData(isConnected) {
+    store.dispatch(networkActions.connectionState({ status: isConnected }));
+
+    this.setState({
+      checkingConnection: false,
+    });
+
+    if (isConnected) {
+      SessionMethods
+        .authenticateFromToken()
+        .catch(response => {
+          Toast.show('Authentication Server is Down. Data will be saved to device until the next successful login.');
+        })
+        .finally(response => {
+          this.setState({
+            authenticating: false
+          })
         });
-      });
+
+      fetchAddresses()
+        .then(fetchTags)
+        .catch(error => {
+          Toast.show('Server is currently down. You will not be able to access database.');
+        })
+        .finally(error => {
+          this.setState({
+            fetchingData: false
+          });
+        });
+    } else {
+      this.setState({
+        fetchingData: false,
+        authenticating: false,
+      })
+    }
   }
 
   componentWillUnmount() {
-    NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectionChange.bind(this));
+    NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectionChange);
   }
 
   handleConnectionChange(isConnected) {
     store.dispatch(networkActions.connectionState({ status: isConnected }));
-
-    if(isConnected) {
-      uploadSavedTasks();
-    }
   }
 
   render() {
-    const { access } = store.getState().session.tokens;
-    const initialRouteName = access && access.value ? 'Home' : 'Login';
-    const initialRouteParams = { initializingApp: true };
-
-    const StackNavigation = StackNavigator({
-      Home: { screen: BaseView },
-      TagPhoto: { screen: TagPhoto },
-      NewTagData: { screen: NewTagData },
-      NewAddress: { screen: NewAddress },
-      AddressList: { screen: AddressList },
-      AddressView: { screen: AddressView },
-      TagView: { screen: TagView },
-      Login: { screen: Login },
-    }, {
-      initialRouteName,
-      initialRouteParams,
-      navigationOptions: {
-        headerTintColor: '#ffffff',
-        headerStyle: {
-          backgroundColor: '#000000',
-        }
-      }
-    });
-
-    if(this.state.fetchingData) {
+    if(this.state.fetchingData || this.state.checkingConnection || this.state.authenticating) {
       return (
         <ActivityIndicator style={{flex: 1}} />
       );
     } else {
+      const { access } = SessionSelectors.get().tokens;
+      const initialRouteParams = { initializingApp: true };
+      let initialRouteName = access && access.value ? 'Home' : 'Login';
+
+      if(!NetworkSelectors.get().isConnected) {
+        initialRouteName = 'Home';
+        Toast.showWithGravity('Device Offline. You will not be able to upload data to servers.', Toast.SHORT, Toast.BOTTOM)
+      }
+
+      const StackNavigation = StackNavigator({
+        Home: { screen: BaseView },
+        TagPhoto: { screen: TagPhoto },
+        NewTagData: { screen: NewTagData },
+        NewAddress: { screen: NewAddress },
+        AddressList: { screen: AddressList },
+        AddressView: { screen: AddressView },
+        TagView: { screen: TagView },
+        Login: { screen: Login },
+      }, {
+        initialRouteName,
+        initialRouteParams,
+        navigationOptions: {
+          headerTintColor: '#ffffff',
+          headerStyle: {
+            backgroundColor: '#000000',
+          }
+        }
+      });
+
       return(
         <StackNavigation />
       );

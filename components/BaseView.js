@@ -11,6 +11,8 @@ import {
   ListItem,
 } from 'react-native';
 
+import Toast from 'react-native-simple-toast';
+
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
 import TabNavigator from 'react-native-tab-navigator';
@@ -23,6 +25,9 @@ import shortid from 'shortid';
 import TagPhoto from './TagPhoto';
 import realm from '../realm';
 import store from '../store';
+import * as NetworkSelectors from '../services/network/selectors';
+import * as SessionSelectors from '../services/session/selectors';
+import * as SessionMethods from '../services/session/';
 
 export default class BaseView extends Component {
   static navigationOptions = {
@@ -41,6 +46,9 @@ export default class BaseView extends Component {
       queriedAddresses: [],
       isLoading: false,
     };
+
+    this.login = this.login.bind(this);
+    this.logout = this.logout.bind(this);
   }
 
   componentWillMount() {
@@ -89,6 +97,15 @@ export default class BaseView extends Component {
             return true;
           }
         });
+  }
+
+  login() {
+    this.props.navigation.navigate('Login');
+  }
+
+  logout() {
+    SessionMethods.logOut();
+    this.login();
   }
 
   showAddresses() {
@@ -214,11 +231,37 @@ export default class BaseView extends Component {
              />}
             >
           </TabNavigator.Item>
+          {this.renderAuthenticationButton()}
         </TabNavigator>
       </View>
     );
   }
+
+  renderAuthenticationButton() {
+    const { access, refresh } = SessionSelectors.get().tokens;
+
+    if(access.value || refresh.value) {
+      return <TabNavigator.Item
+        title="Logout"
+        renderIcon={() => <Icon name="ios-log-out" size={30}
+        style={{backgroundColor: '#00000000'}}
+        onPress={this.logout}
+         />}
+        >
+      </TabNavigator.Item>
+    } else {
+      return <TabNavigator.Item
+        title="Login"
+        renderIcon={() => <Icon name="ios-log-in" size={30}
+        style={{backgroundColor: '#00000000'}}
+        onPress={this.login}
+         />}
+        >
+      </TabNavigator.Item>
+    }
+  }
 }
+
 
 const styles = StyleSheet.create({
   listItem: {

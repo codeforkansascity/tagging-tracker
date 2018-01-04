@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  Alert,
   AppRegistry,
   StyleSheet,
   Text,
@@ -14,6 +15,7 @@ import {
   ScrollView,
 } from 'react-native';
 
+import Toast from 'react-native-simple-toast';
 import Camera from 'react-native-camera';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Geocoder from 'react-native-geocoding';
@@ -47,6 +49,8 @@ export default class Login extends Component {
     };
 
     this.submitForm = this.submitForm.bind(this);
+    this.skipLogin = this.skipLogin.bind(this);
+    this.navigateHome = this.navigateHome.bind(this);
   }
 
   componentDidMount() {
@@ -55,32 +59,49 @@ export default class Login extends Component {
 
   submitForm() {
     authenticate(this.state.email, this.state.password)
-      .then(response => {
-        const resetAction = NavigationActions.reset({
-          index: 0,
-          actions: [
-            NavigationActions.navigate({ routeName: 'Home', params: { initializingApp: true }})
-          ]
-        });
-
-        this.props.navigation.dispatch(resetAction);
-      })
+      .then(this.navigateHome)
       .catch(response => {
         alert('Login failed. Please Double Check Credentials');
       });
   }
 
+  skipLogin() {
+    Alert.alert(
+      'Data cannot be updated unless you are logged in',
+      null,
+      [
+        {text: 'Login', style: 'cancel'},
+        {text: 'Continue', onPress: this.navigateHome},
+      ],
+      { cancelable: false }
+    );
+  }
+
+  navigateHome() {
+    const resetAction = NavigationActions.reset({
+      index: 0,
+      actions: [
+        NavigationActions.navigate({ routeName: 'Home', params: { initializingApp: true }})
+      ]
+    });
+
+    this.props.navigation.dispatch(resetAction);
+  }
+
   render() {
     return (
-      <ScrollView style={{flex: 1}}>
-        <View style={{padding: 20 }}>
+      <View style={{flex: 1}}>
+        <View style={{flex: 1, padding: 20}}>
           <Text>Email</Text>
           <TextInput autoCapitalize="none" style={styles.input} value={this.state.email} onChangeText={(email) => this.setState({email})} />
           <Text>Password</Text>
           <TextInput secureTextEntry style={styles.input} value={this.state.password} onChangeText={(password) => this.setState({password})} />
           <Button title="Login" onPress={this.submitForm} />
         </View>
-      </ScrollView>
+        <View style={{marginBottom: 10}}>
+          <Button title="Skip" onPress={this.skipLogin} />
+        </View>
+      </View>
     );
   }
 }

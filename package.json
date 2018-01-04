@@ -24,6 +24,7 @@
     "react-native-geocoding": "^0.2.0",
     "react-native-mime-types": "^2.2.1",
     "react-native-radio-buttons": "^1.0.0",
+    "react-native-simple-toast": "0.0.7",
     "react-native-tab-navigator": "^0.3.4",
     "react-native-vector-icons": "^4.4.0",
     "react-navigation": "^1.0.0-beta.13",

@@ -15,9 +15,9 @@ const setSessionTimeout = (duration) => {
   );
 };
 
-const clearSession = () => {
+const clearSession = (response) => {
   clearTimeout(sessionTimeout);
-  store.dispatch(actionCreators.update());
+  store.dispatch(actionCreators.update(response));
 };
 
 const onRequestSuccess = (response) => {
@@ -51,7 +51,7 @@ export const refreshToken = () => {
 
 export const logOut = () =>
   api.logOut()
-    .then(onRequestSuccess)
+    .then(clearSession)
     .catch(onRequestFailed);
 
 export const authenticate = (email, password) =>
@@ -60,6 +60,26 @@ export const authenticate = (email, password) =>
     .then(api.getUserInfo)
     .then(setUser)
     .catch(onRequestFailed);
+
+export const authenticateFromToken = () => {
+  const { access, refresh } = selectors.get().tokens;
+
+  if(access && access.value) {
+    return api
+      .getUserInfo(access)
+      .then(setUser)
+      .catch(onRequestFailed);
+  } else if(refresh && refresh.value) {
+    return api
+      .refresh()
+      .then(onRequestSuccess)
+      .then(api.getUserInfo)
+      .then(setUser)
+      .catch(onRequestFailed);
+  } else {
+    return Promise.resolve({});
+  }
+}
 
 export const revoke = () => {
   const session = selectors.get();

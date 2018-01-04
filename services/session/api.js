@@ -4,21 +4,16 @@ import Auth0 from 'react-native-auth0';
 
 import store from '../../store';
 import credentials from '../../config/Auth0Config';
+import * as SessionSelectors from './selectors';
 
 const auth0 = new Auth0(credentials);
 
-const endPoints = {
-  authenticate: '/users/auth',
-  revoke: '/users/auth/revoke',
-  refresh: '/users/auth/refresh',
-};
-
-const fetchApi = (url, options, method, authentication) => {
+export const authenticate = (email, password) => {
   return auth0
     .auth
     .passwordRealm({
-      username: authentication.email,
-      password: authentication.password,
+      username: email,
+      password: password,
       realm: 'Username-Password-Authentication',
       scope: 'openid profile email address phone offline_access',
     })
@@ -62,11 +57,10 @@ export const logOut = () => {
   });
 }
 
-export const authenticate = (email, password) => fetchApi(endPoints.authenticate, {}, 'post', { email, password });
-
-export const refresh = (token, user) => auth0
-  .auth
-    .refreshToken({refreshToken: token})
+export const refresh = () =>
+  auth0
+    .auth
+    .refreshToken({refreshToken: SessionSelectors.get().tokens.refresh.value})
     .then(response => {
       return {
         tokens: {
@@ -74,9 +68,7 @@ export const refresh = (token, user) => auth0
             value: response.accessToken,
             expiresIn: response.expiresIn,
           }, 
-          refresh: {
-            value: token,
-          }
+          refresh: SessionSelectors.get().tokens.refresh.value,
         },
         user: store.getState().session.user,
       };
