@@ -22,6 +22,7 @@ import realm from '../realm';
 import BaseView from './BaseView';
 import ItemCardView from './android/ItemCardView';
 import IOSDivider from './ios/Divider';
+import * as SessionSelectors from '../services/session/selectors';
 
 const win = Dimensions.get('window');
 
@@ -29,20 +30,22 @@ export default class TagView extends Component {
   static navigationOptions = ({navigation}) => {
     let options = {}
 
-    options.headerRight =
-      <Icon style={
-          {
-            color: '#ffffff',
-            padding: 10,
-            textShadowColor: '#000000',
-            textShadowOffset: {width: 1, height: 1},
-            textShadowRadius: 0,
+    if (SessionSelectors.get().tokens.access.value) {
+      options.headerRight =
+        <Icon style={
+            {
+              color: '#ffffff',
+              padding: 10,
+              textShadowColor: '#000000',
+              textShadowOffset: {width: 1, height: 1},
+              textShadowRadius: 0,
+            }
           }
-        }
-        name="md-trash"
-        size={30}
-        onPress={navigation.state.params.deleteTagPrompt}
-      />;
+          name="md-trash"
+          size={30}
+          onPress={navigation.state.params.deleteTagPrompt}
+        />;
+    }
 
     if(Platform.OS === 'ios') {
       options.headerStyle = {

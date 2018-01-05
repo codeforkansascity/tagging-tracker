@@ -36,20 +36,23 @@ export default class AddressView extends Component {
     let options = {}
 
     options.title = navigation.state.params.address && navigation.state.params.address.street;
-    options.headerRight =
-      <Icon style={
-          {
-            color: '#ffffff',
-            padding: 10,
-            textShadowColor: '#000000',
-            textShadowOffset: {width: 1, height: 1},
-            textShadowRadius: 0,
+
+    if (SessionSelectors.get().tokens.access.value) {
+      options.headerRight =
+        <Icon style={
+            {
+              color: '#ffffff',
+              padding: 10,
+              textShadowColor: '#000000',
+              textShadowOffset: {width: 1, height: 1},
+              textShadowRadius: 0,
+            }
           }
-        }
-        name="md-trash"
-        size={30}
-        onPress={navigation.state.params.deleteAddressPrompt}
-      />;
+          name="md-trash"
+          size={30}
+          onPress={navigation.state.params.deleteAddressPrompt}
+        />;
+    }
 
     return options;
   };
@@ -186,7 +189,8 @@ export default class AddressView extends Component {
             >
               {tag.description}
             </Text>
-            <Icon style={
+            {SessionSelectors.get().tokens.access.value && (
+              <Icon style={
                 {
                   color: '#FF0505',
                   alignSelf: 'flex-end',
@@ -195,7 +199,7 @@ export default class AddressView extends Component {
               name="md-trash"
               size={30}
               onPress={() => {this.deleteTagConfirm(tag)}}
-            />
+            />)}
           </View>
         </View>
       );
