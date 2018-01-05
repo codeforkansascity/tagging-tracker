@@ -15,6 +15,7 @@ import {
   ScrollView,
 } from 'react-native';
 
+import Toast from 'react-native-simple-toast';
 import Camera from 'react-native-camera';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Geocoder from 'react-native-geocoding';
@@ -116,12 +117,14 @@ export default class NewTagData extends Component {
       .then(uploadTag)
       .then(response => {
         realm.write(() => {
+          tag.id = response.data.id.toString();
           tag.address = response.data.address.toString();
           tag.uploaded_online = true;
         })
       })
       .then(this.submitDataSuccessNavigation.bind(this));
     } else {
+      Toast.show('Phone is Offline. Data will be uploaded when phone is connected.');
       let request = { action: 'UPLOAD', type: 'Tag', entity: tag.serviceProperties };
       store.dispatch(taggingTrackerActions.addToQueue({ request }));
       this.submitDataSuccessNavigation();

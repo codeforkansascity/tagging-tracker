@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   AppRegistry,
   StyleSheet,
@@ -7,6 +8,7 @@ import {
   View,
   ScrollView,
   TouchableHighlight,
+  TouchableWithoutFeedback,
   StatusBar,
   TextInput,
   Image,
@@ -52,6 +54,11 @@ export default class AddressView extends Component {
     return options;
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
   componentWillMount() {
     let address = realm.objects('Address').filtered('id = $0', this.props.navigation.state.params.addressId);
 
@@ -85,6 +92,10 @@ export default class AddressView extends Component {
   deleteCurrentAddress() {
     const { address } = this.props.navigation.state.params;
     const neighborhood = address.neighborhood;
+
+    this.setState({
+      deletingAddress: true
+    });
 
     deleteAddress(address.id)
       .then(() => {
@@ -129,53 +140,103 @@ export default class AddressView extends Component {
   }
 
   deleteCurrentTag(tag) {
+    this.setState({
+      deletingTag: tag.id
+    });
+
     deleteTag(tag.id)
       .then(() => {
         realm.write(() => {
           realm.delete(tag);
           this.forceUpdate();
         });
-      });
+      })
+      .finally(response => {
+        this.setState({
+          deletingTag: null
+        });
+      })
   }
 
   renderTagComponent(tag) {
-    return (
-      <View style={{padding: 10}}>
-        <TouchableHighlight
-          onPress={() => {this.props.navigation.navigate('TagView', {tag})}}
-        >
-          <Image 
-            style={{width: win.width - 20, height: 200}} 
-            source={{uri: tag.img}} 
-          />
-        </TouchableHighlight>
-        <View 
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            justifyContent: 'center',
-          }}
-        >
-          <Text style={{
-            flex: 1, 
-            justifyContent: 'center',
-            marginTop: 5}}
+    if(this.state.deletingTag == tag.id) {
+      return (<ActivityIndicator style={{padding: 20}}/>);
+    } else {
+      return (
+        <View style={{padding: 10}}>
+          <TouchableHighlight
+            onPress={() => {this.props.navigation.navigate('TagView', {tag})}}
           >
-            {tag.description}
-          </Text>
-          <Icon style={
-              {
-                color: '#FF0505',
-                alignSelf: 'flex-end',
+            <Image 
+              style={{width: win.width - 20, height: 200}} 
+              source={{uri: tag.img}} 
+            />
+          </TouchableHighlight>
+          <View 
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{
+              flex: 1, 
+              justifyContent: 'center',
+              marginTop: 5}}
+            >
+              {tag.description}
+            </Text>
+            <Icon style={
+                {
+                  color: '#FF0505',
+                  alignSelf: 'flex-end',
+                }
               }
-            }
-            name="md-trash"
-            size={30}
-            onPress={() => {this.deleteTagConfirm(tag)}}
-          />
+              name="md-trash"
+              size={30}
+              onPress={() => {this.deleteTagConfirm(tag)}}
+            />
+          </View>
         </View>
+      );
+    }
+  }
+
+  renderNoTagSection() {
+    return (
+      <TouchableWithoutFeedback onPress={this.addTag.bind(this)}>
+        <View onPress={this.addTag.bind(this)} style={{flexDirection: 'column', alignItems: 'center', padding: 20, flex: 1}}>
+          <Icon name="ios-camera" size={100} />
+          <Text style={{fontSize: 30}}>Add Tag</Text>
       </View>
-    )
+      </TouchableWithoutFeedback>
+    );
+  }
+
+  renderTagsSection(tags) {
+    return (
+      <View style={{flex: 1}}>
+        {tags.length == 0 && this.renderNoTagSection()}
+        <ScrollView>
+          {tags.map(this.renderTagComponent.bind(this))}
+          <View style={{height: 50}}></View>
+        </ScrollView>
+        <TabNavigator
+          unselectedTintColor="yellow"
+          tintColor="white"
+          barTintColor="black"
+          >
+          <TabNavigator.Item
+            title="Add Tag"
+            onPress={this.addTag.bind(this)}
+            renderIcon={
+              () => <Icon name="ios-camera" size={30} style={{backgroundColor: '#00000000'}} />
+            }
+            >
+          </TabNavigator.Item>
+        </TabNavigator>
+      </View>
+    );
   }
 
   render() {
@@ -200,27 +261,19 @@ export default class AddressView extends Component {
     const styles = StyleSheet.create(stylesHash);
     let tags = realm.objects('Tag').filtered('address = $0', addressId);
 
-    return (
-      <View style={{flex: 1}}>
-        <ScrollView>
-          {tags.map(this.renderTagComponent.bind(this))}
-          <View style={{height: 50}}></View>
-        </ScrollView>
-        <TabNavigator
-          unselectedTintColor="yellow"
-          tintColor="white"
-          barTintColor="black"
-          >
-          <TabNavigator.Item
-            title="Add Tag"
-            onPress={this.addTag.bind(this)}
-            renderIcon={
-              () => <Icon name="ios-camera" size={30} style={{backgroundColor: '#00000000'}} />
-            }
-            >
-          </TabNavigator.Item>
-        </TabNavigator>
-      </View>
-    );
+    if (this.state.deletingAddress) {
+      return (
+        <View style={{flex: 1, flexDirection: 'column', alignItems: 'center'}}>
+          <ActivityIndicator style={{flex: 1}} />
+          <Text style={{margin: 10}}>Deleting Address</Text>
+        </View>
+      );
+    }
+    
+    if (tags.length == 0) {
+      return this.renderNoTagSection();
+    }
+    
+    return this.renderTagsSection(tags);
   }
 }

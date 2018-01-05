@@ -60,11 +60,13 @@ export default class AddressList extends Component {
             data={this.state.addresses}
             renderItem={({item}) => {
                 return (
-                  <View style={styles.listItem}>
-                    <Text style={{alignContent: 'center', textAlignVertical: 'center'}} onPress={() => {this.props.navigation.navigate('AddressView', {addressId: item.id})}} >
-                      {item.street}
-                    </Text>
-                  </View>
+                  <TouchableHighlight onPress={() => {this.props.navigation.navigate('AddressView', {addressId: item.id})}}>
+                    <View style={styles.listItem}>
+                      <Text style={{alignContent: 'center', textAlignVertical: 'center'}}>
+                        {item.street}
+                      </Text>
+                    </View>
+                  </TouchableHighlight>
                 )
               }
             }

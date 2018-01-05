@@ -31,7 +31,7 @@ import * as SessionMethods from '../services/session/';
 
 export default class BaseView extends Component {
   static navigationOptions = {
-    title: 'Tagging Tracker',
+    title: 'Neighborhoods',
   };
 
   constructor(props) {
@@ -186,16 +186,21 @@ export default class BaseView extends Component {
                 keyExtractor={item => shortid.generate()}
                 renderItem={({item}) => {
                     return (
-                      <Text 
-                        key={item.id} 
-                        style={styles.listItem}
+                      <TouchableHighlight
                         onPress={() => {
-                          this.popupDialog.dismiss();
-                          this.props.navigation.navigate('AddressView', {addressId: item.id})
-                        }}
+                            this.popupDialog.dismiss();
+                            this.props.navigation.navigate('AddressView', {addressId: item.id})
+                          }}
                       >
-                        {item.street}
-                      </Text> 
+                        <View>
+                          <Text 
+                            key={item.id} 
+                            style={styles.listItem}
+                          >
+                            {item.street}
+                          </Text> 
+                        </View>
+                      </TouchableHighlight>
                     )
                   }
                 }
@@ -211,7 +216,13 @@ export default class BaseView extends Component {
             onRefresh={this.fetchAddresses}
             renderItem={({item}) => {
                 return (
-                  <Text style={styles.listItem} onPress={() => {this.props.navigation.navigate('AddressList', {neighborhood: item.name})}} >{item.name}</Text>
+                  <TouchableHighlight
+                   onPress={() => {this.props.navigation.navigate('AddressList', {neighborhood: item.name})}}
+                  >
+                    <View style={{backgroundColor: '#ffffff'}}>
+                      <Text style={styles.listItem}>{item.name}</Text>
+                    </View>
+                  </TouchableHighlight>
                 )
               }
             }
@@ -225,7 +236,7 @@ export default class BaseView extends Component {
           >
           <TabNavigator.Item
             title="Add Address"
-            renderIcon={() => <Icon name="ios-camera" size={30}
+            renderIcon={() => <Icon name="ios-add" size={30}
             style={{backgroundColor: '#00000000'}}
             onPress={this.showAddresses.bind(this)}
              />}
@@ -268,7 +279,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
     padding: 10,
     borderTopWidth: 1,
     borderBottomWidth: 1,

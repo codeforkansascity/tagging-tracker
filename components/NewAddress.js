@@ -14,7 +14,7 @@ import {
   ScrollView,
 } from 'react-native';
 
-
+import Toast from 'react-native-simple-toast';
 import Geocoder from 'react-native-geocoding';
 import { SegmentedControls } from 'react-native-radio-buttons';
 import { NavigationActions } from 'react-navigation';
@@ -140,26 +140,30 @@ export default class NewAddress extends Component {
       uploadAddress(address.serviceProperties)
         .then(response => {
           realm.write(() => {
-            address.id = response.id;
+            address.id = response.data.id.toString();
             address.uploaded_online = true;
           });
+
+          return address;
         })
         .then(this.navigateOnSubmit)
         .catch(error => {
           alert('Address could not be saved. Please try again');
         })
     } else {
+      Toast.show('Phone is offline. Data will be uploaded when you have an online connection.')
       const request = { action: 'UPLOAD', type: 'Address', entity: address.serviceProperties };
       store.dispatch(taggingTrackerActions.addToQueue({ request }));
-      this.navigateOnSubmit();
+      this.navigateOnSubmit(address);
     }
   }
 
-  navigateOnSubmit() {
+  navigateOnSubmit(address) {
     const resetAction = NavigationActions.reset({
-      index: 0,
+      index: 1,
       actions: [
-        NavigationActions.navigate({ routeName: 'Home'})
+        NavigationActions.navigate({ routeName: 'Home' }),
+        NavigationActions.navigate({ routeName: 'AddressView', params: { addressId: address.id } })
       ]
     })
 
