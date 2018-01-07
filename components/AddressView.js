@@ -17,7 +17,6 @@ import {
 } from 'react-native';
 
 import Modal from 'react-native-modal';
-import Icon from 'react-native-vector-icons/Ionicons';
 import TabNavigator from 'react-native-tab-navigator';
 import { NavigationActions } from 'react-navigation';
 
@@ -26,6 +25,7 @@ import Address from '../realm/address';
 import BaseView from './BaseView';
 import ItemCardView from './android/ItemCardView';
 import IOSDivider from './ios/Divider';
+import NativeIonicon from './common_ui/NativeIonicon';
 import * as SessionSelectors from '../services/session/selectors';
 import * as NetworkSelectors from '../services/network/selectors';
 import { deleteAddress, deleteTag } from '../services/tagging_tracker';
@@ -192,13 +192,13 @@ export default class AddressView extends Component {
               {tag.description}
             </Text>
             {SessionSelectors.get().tokens.access.value && (
-              <Icon style={
+              <NativeIonicon style={
                 {
                   color: '#FF0505',
                   alignSelf: 'flex-end',
                 }
               }
-              name="ios-trash"
+              name="trash"
               size={24}
               onPress={() => {this.deleteTagConfirm(tag)}}
             />)}
@@ -221,7 +221,7 @@ export default class AddressView extends Component {
         </Modal>
         <TouchableWithoutFeedback style={{flex: 1}} onPress={this.addTag.bind(this)}>
           <View onPress={this.addTag.bind(this)} style={{flexDirection: 'column', alignItems: 'center', padding: 20, flex: 1}}>
-            <Icon name="ios-camera" size={100} />
+            <NativeIonicon name="camera" size={100} />
             <Text style={{fontSize: 30}}>Add Tag</Text>
           </View>
         </TouchableWithoutFeedback>
@@ -234,14 +234,14 @@ export default class AddressView extends Component {
             title="Info"
             onPress={() => {this.setState({addressDetailsViewable: true})}}
             renderIcon={
-              () => <Icon name="ios-information-circle" size={24} style={{backgroundColor: '#00000000'}} />
+              () => <NativeIonicon name="information-circle" size={24} style={{backgroundColor: '#00000000'}} />
             }
           />
           {SessionSelectors.get().tokens.access.value && (
             <TabNavigator.Item
               title="Delete"
               renderIcon={() =>
-                <Icon name="ios-trash" size={24} />
+                <NativeIonicon name="trash" size={24} />
               }
               onPress={this.deleteAddressPrompt}
             />)}
@@ -273,19 +273,19 @@ export default class AddressView extends Component {
           <TabNavigator.Item
             title="Add Tag"
             onPress={this.addTag.bind(this)}
-            renderIcon={() => <Icon name="ios-camera" size={30} style={{backgroundColor: '#00000000'}} />}
+            renderIcon={() => <NativeIonicon name="camera" size={30} style={{backgroundColor: '#00000000'}} />}
           />
           <TabNavigator.Item
             title="Info"
             onPress={() => {this.setState({addressDetailsViewable: true})}}
             renderIcon={
-              () => <Icon name="ios-information-circle" size={24} style={{backgroundColor: '#00000000'}} />
+              () => <NativeIonicon name="information-circle" size={24} style={{backgroundColor: '#00000000'}} />
             }
           />
           {SessionSelectors.get().tokens.access.value && (
             <TabNavigator.Item
               title="Delete"
-              renderIcon={() => <Icon name="ios-trash" size={24} /> }
+              renderIcon={() => <NativeIonicon name="trash" size={24} /> }
               onPress={this.deleteAddressPrompt}
             />)}
         </TabNavigator>

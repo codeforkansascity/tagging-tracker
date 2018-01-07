@@ -14,7 +14,6 @@ import {
 import Toast from 'react-native-simple-toast';
 
 import axios from 'axios';
-import Icon from 'react-native-vector-icons/Ionicons';
 import TabNavigator from 'react-native-tab-navigator';
 import { DialogComponent, DialogTitle, DialogContent, DialogButton } from 'react-native-dialog-component';
 import Geocoder from 'react-native-geocoding';
@@ -25,6 +24,7 @@ import shortid from 'shortid';
 import TagPhoto from './TagPhoto';
 import realm from '../realm';
 import store from '../store';
+import NativeIonicon from './common_ui/NativeIonicon';
 import * as NetworkSelectors from '../services/network/selectors';
 import * as SessionSelectors from '../services/session/selectors';
 import * as SessionMethods from '../services/session/';
@@ -236,7 +236,7 @@ export default class BaseView extends Component {
           >
           <TabNavigator.Item
             title="Add Address"
-            renderIcon={() => <Icon name="ios-add" size={30}
+            renderIcon={() => <NativeIonicon name="add" size={30}
             style={{backgroundColor: '#00000000'}}
             onPress={this.showAddresses.bind(this)}
              />}
@@ -253,7 +253,7 @@ export default class BaseView extends Component {
     if(access.value || refresh.value) {
       return <TabNavigator.Item
         title="Logout"
-        renderIcon={() => <Icon name="ios-log-out" size={24}
+        renderIcon={() => <NativeIonicon name="log-out" size={24}
         style={{backgroundColor: '#00000000'}}
         onPress={this.logout}
          />}
@@ -261,7 +261,7 @@ export default class BaseView extends Component {
     } else {
       return <TabNavigator.Item
         title="Login"
-        renderIcon={() => <Icon name="ios-log-in" size={24}
+        renderIcon={() => <NativeIonicon name="log-in" size={24}
         style={{backgroundColor: '#00000000'}}
         onPress={this.login}
          />}
