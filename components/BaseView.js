@@ -240,8 +240,7 @@ export default class BaseView extends Component {
             style={{backgroundColor: '#00000000'}}
             onPress={this.showAddresses.bind(this)}
              />}
-            >
-          </TabNavigator.Item>
+          />
           {this.renderAuthenticationButton()}
         </TabNavigator>
       </View>
@@ -254,21 +253,19 @@ export default class BaseView extends Component {
     if(access.value || refresh.value) {
       return <TabNavigator.Item
         title="Logout"
-        renderIcon={() => <Icon name="ios-log-out" size={30}
+        renderIcon={() => <Icon name="ios-log-out" size={24}
         style={{backgroundColor: '#00000000'}}
         onPress={this.logout}
          />}
-        >
-      </TabNavigator.Item>
+      />;
     } else {
       return <TabNavigator.Item
         title="Login"
-        renderIcon={() => <Icon name="ios-log-in" size={30}
+        renderIcon={() => <Icon name="ios-log-in" size={24}
         style={{backgroundColor: '#00000000'}}
         onPress={this.login}
          />}
-        >
-      </TabNavigator.Item>
+      />;
     }
   }
 }

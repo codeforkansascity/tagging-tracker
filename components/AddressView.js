@@ -52,26 +52,7 @@ const modalContentStyles = {
 export default class AddressView extends Component {
   static navigationOptions = ({navigation}) => {
     let options = {}
-
     options.title = navigation.state.params.address && navigation.state.params.address.street;
-
-    if (SessionSelectors.get().tokens.access.value) {
-      options.headerRight =
-        <Icon style={
-            {
-              color: '#ffffff',
-              padding: 10,
-              textShadowColor: '#000000',
-              textShadowOffset: {width: 1, height: 1},
-              textShadowRadius: 0,
-            }
-          }
-          name="md-trash"
-          size={30}
-          onPress={navigation.state.params.deleteAddressPrompt}
-        />;
-    }
-
     return options;
   };
 
@@ -81,6 +62,7 @@ export default class AddressView extends Component {
 
     this.closeAddressDetailsModal = this.closeAddressDetailsModal.bind(this);
     this.deleteCurrentTag = this.deleteCurrentTag.bind(this);
+    this.deleteAddressPrompt = this.deleteAddressPrompt.bind(this);
   }
 
   componentWillMount() {
@@ -91,7 +73,6 @@ export default class AddressView extends Component {
     }
 
     this.props.navigation.setParams({
-      deleteAddressPrompt: this.deleteAddressPrompt.bind(this),
       address,
       ...this.props.navigation.params
     });
@@ -217,8 +198,8 @@ export default class AddressView extends Component {
                   alignSelf: 'flex-end',
                 }
               }
-              name="md-trash"
-              size={30}
+              name="ios-trash"
+              size={24}
               onPress={() => {this.deleteTagConfirm(tag)}}
             />)}
           </View>
@@ -253,10 +234,17 @@ export default class AddressView extends Component {
             title="Info"
             onPress={() => {this.setState({addressDetailsViewable: true})}}
             renderIcon={
-              () => <Icon name="ios-information-circle" size={30} style={{backgroundColor: '#00000000'}} />
+              () => <Icon name="ios-information-circle" size={24} style={{backgroundColor: '#00000000'}} />
             }
-            >
-          </TabNavigator.Item>
+          />
+          {SessionSelectors.get().tokens.access.value && (
+            <TabNavigator.Item
+              title="Delete"
+              renderIcon={() =>
+                <Icon name="ios-trash" size={24} />
+              }
+              onPress={this.deleteAddressPrompt}
+            />)}
         </TabNavigator>
       </View>
     );
@@ -285,19 +273,21 @@ export default class AddressView extends Component {
           <TabNavigator.Item
             title="Add Tag"
             onPress={this.addTag.bind(this)}
-            renderIcon={
-              () => <Icon name="ios-camera" size={30} style={{backgroundColor: '#00000000'}} />
-            }
-            >
-          </TabNavigator.Item>
+            renderIcon={() => <Icon name="ios-camera" size={30} style={{backgroundColor: '#00000000'}} />}
+          />
           <TabNavigator.Item
             title="Info"
             onPress={() => {this.setState({addressDetailsViewable: true})}}
             renderIcon={
-              () => <Icon name="ios-information-circle" size={30} style={{backgroundColor: '#00000000'}} />
+              () => <Icon name="ios-information-circle" size={24} style={{backgroundColor: '#00000000'}} />
             }
-            >
-          </TabNavigator.Item>
+          />
+          {SessionSelectors.get().tokens.access.value && (
+            <TabNavigator.Item
+              title="Delete"
+              renderIcon={() => <Icon name="ios-trash" size={24} /> }
+              onPress={this.deleteAddressPrompt}
+            />)}
         </TabNavigator>
       </View>
     );
