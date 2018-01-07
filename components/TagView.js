@@ -134,6 +134,7 @@ export default class TagView extends Component {
           <Text style={styles.bodyText}>{tag.square_footage}</Text>
           <Text style={styles.title}>Tag Words</Text>
           <Text style={styles.bodyText}>{tag.tag_words}</Text>
+          <Text style={styles.title}>Type of Residence</Text>
         </View>
       </ScrollView>
     );

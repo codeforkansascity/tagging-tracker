@@ -16,11 +16,13 @@ import {
   Platform,
 } from 'react-native';
 
+import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
 import TabNavigator from 'react-native-tab-navigator';
-import { NavigationActions } from 'react-navigation'
+import { NavigationActions } from 'react-navigation';
 
 import realm from '../realm';
+import Address from '../realm/address';
 import BaseView from './BaseView';
 import ItemCardView from './android/ItemCardView';
 import IOSDivider from './ios/Divider';
@@ -30,6 +32,22 @@ import { deleteAddress, deleteTag } from '../services/tagging_tracker';
 
 
 const win = Dimensions.get('window');
+
+const modalContentStyles = {
+  mainTitle: {
+    fontSize: 34,
+    marginBottom: 10,
+  },
+  title: {
+    fontSize: 28,
+    marginBottom: 10,
+    marginTop: 5,
+  },
+  bodyText: {
+    fontSize: 20,
+    marginBottom: 20,
+  }
+};
 
 export default class AddressView extends Component {
   static navigationOptions = ({navigation}) => {
@@ -60,6 +78,7 @@ export default class AddressView extends Component {
   constructor(props) {
     super(props);
     this.state = {};
+    this.closeAddressDetailsModal = this.closeAddressDetailsModal.bind(this);
   }
 
   componentWillMount() {
@@ -208,19 +227,50 @@ export default class AddressView extends Component {
 
   renderNoTagSection() {
     return (
-      <TouchableWithoutFeedback onPress={this.addTag.bind(this)}>
-        <View onPress={this.addTag.bind(this)} style={{flexDirection: 'column', alignItems: 'center', padding: 20, flex: 1}}>
-          <Icon name="ios-camera" size={100} />
-          <Text style={{fontSize: 30}}>Add Tag</Text>
+      <View style={{flex: 1}}>
+        <Modal
+          isVisible={this.state.addressDetailsViewable}
+          backdropColor='#000000'
+          onBackdropPress={() => {this.setState({addressDetailsViewable: false})}}
+          transparent
+        >
+          {this.renderAddressDetails(this.props.navigation.state.params.address)}
+        </Modal>
+        <TouchableWithoutFeedback style={{flex: 1}} onPress={this.addTag.bind(this)}>
+          <View onPress={this.addTag.bind(this)} style={{flexDirection: 'column', alignItems: 'center', padding: 20, flex: 1}}>
+            <Icon name="ios-camera" size={100} />
+            <Text style={{fontSize: 30}}>Add Tag</Text>
+          </View>
+        </TouchableWithoutFeedback>
+        <TabNavigator
+          unselectedTintColor="yellow"
+          tintColor="white"
+          barTintColor="black"
+          >
+          <TabNavigator.Item
+            title="Info"
+            onPress={() => {this.setState({addressDetailsViewable: true})}}
+            renderIcon={
+              () => <Icon name="ios-information-circle" size={30} style={{backgroundColor: '#00000000'}} />
+            }
+            >
+          </TabNavigator.Item>
+        </TabNavigator>
       </View>
-      </TouchableWithoutFeedback>
     );
   }
 
   renderTagsSection(tags) {
     return (
       <View style={{flex: 1}}>
-        {tags.length == 0 && this.renderNoTagSection()}
+        <Modal
+          isVisible={this.state.addressDetailsViewable}
+          backdropColor='#000000'
+          onBackdropPress={() => {this.setState({addressDetailsViewable: false})}}
+          transparent
+        >
+          {this.renderAddressDetails(this.props.navigation.state.params.address)}
+        </Modal>
         <ScrollView>
           {tags.map(this.renderTagComponent.bind(this))}
           <View style={{height: 50}}></View>
@@ -238,7 +288,60 @@ export default class AddressView extends Component {
             }
             >
           </TabNavigator.Item>
+          <TabNavigator.Item
+            title="Info"
+            onPress={() => {this.setState({addressDetailsViewable: true})}}
+            renderIcon={
+              () => <Icon name="ios-information-circle" size={30} style={{backgroundColor: '#00000000'}} />
+            }
+            >
+          </TabNavigator.Item>
         </TabNavigator>
+      </View>
+    );
+  }
+
+  closeAddressDetailsModal() {
+    this.setState({
+      addressDetailsViewable: false,
+    });
+  }
+
+  renderAddressDetails(address) {
+    if(address) {
+      return this.renderAddressDetailsIOS(address);
+    } else {
+      return <View></View>;
+    }
+  }
+
+  renderAddressDetailsIOS(address) {
+    return (
+      <View style={{flex: 1, margin: 20}}>
+        <View style={{ flex: 1, backgroundColor: '#ffffff', padding: 10, borderRadius: 2 }}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 10}}>
+            <Text onPress={this.closeAddressDetailsModal}>Close</Text>
+            <Text>Edit</Text>
+          </View>
+          <ScrollView style={{flex: 1}}>
+            <Text style={modalContentStyles.title}>Address</Text>
+            <Text style={modalContentStyles.bodyText}>{address.street}</Text>
+            <Text style={modalContentStyles.title}>Neighborhood</Text>
+            <Text style={modalContentStyles.bodyText}>{address.neighborhood}</Text>
+            <Text style={modalContentStyles.title}>City</Text>
+            <Text style={modalContentStyles.bodyText}>{address.city}</Text>
+            <Text style={modalContentStyles.title}>State</Text>
+            <Text style={modalContentStyles.bodyText}>{address.state}</Text>
+            <Text style={modalContentStyles.title}>Property Type</Text>
+            <Text style={modalContentStyles.bodyText}>{Address.PROPERTY_TYPE_DISPLAYS[address.type_of_property - 1]}</Text>
+            <Text style={modalContentStyles.title}>Owner Name</Text>
+            <Text style={modalContentStyles.bodyText}>{address.owner_name}</Text>
+            <Text style={modalContentStyles.title}>Owner Number</Text>
+            <Text style={modalContentStyles.bodyText}>{address.owner_contact_number}</Text>
+            <Text style={modalContentStyles.title}>Owner Email</Text>
+            <Text style={modalContentStyles.bodyText}>{address.owner_email}</Text>
+          </ScrollView>
+        </View>
       </View>
     );
   }

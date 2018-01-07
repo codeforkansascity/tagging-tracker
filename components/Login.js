@@ -12,7 +12,6 @@ import {
   Dimensions,
   Button,
   Platform,
-  ScrollView,
 } from 'react-native';
 
 import Toast from 'react-native-simple-toast';

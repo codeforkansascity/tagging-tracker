@@ -28,6 +28,7 @@ import networkActions from '../services/network/actions';
 import * as networkSelectors from '../services/network/selectors';
 import { uploadAddress } from '../services/tagging_tracker';
 import taggingTrackerActions from '../services/tagging_tracker/actions';
+import Address from '../realm/address';
 
 const win = Dimensions.get('window');
 
@@ -185,7 +186,7 @@ export default class NewAddress extends Component {
     
     return (
       <View key={index}>
-        <Text onPress={onSelect} style={style}>{optionDisplays[option-1]}</Text>
+        <Text onPress={onSelect} style={style}>{Address.PROPERTY_TYPE_DISPLAYS[option-1]}</Text>
       </View>
     );
   }
@@ -210,7 +211,7 @@ export default class NewAddress extends Component {
           <TextInput style={styles.input} value={this.state.zip} onChangeText={(zip) => this.setState({zip})} />
           <Text>Property Type</Text>
           <SegmentedControls
-            options={ options }
+            options={ Address.PROPERTY_TYPES }
             onSelection={ this.setSelectedOption.bind(this) }
             selectedOption={this.state.type_of_property }
             renderOption={ this.renderOption.bind(this) }
@@ -220,8 +221,8 @@ export default class NewAddress extends Component {
           <TextInput style={styles.input} value={this.state.property_type} onChangeText={(property_type) => this.setState({property_type})} />
           <Text>Owner Name</Text>
           <TextInput style={styles.input} value={this.state.owner_name} onChangeText={(owner_name) => this.setState({owner_name})} />
-          <Text>Owner Number</Text>
-          <TextInput style={styles.input} value={this.state.owner_number} onChangeText={(owner_number) => this.setState({owner_number})} />
+          <Text>Owner Contact Number</Text>
+          <TextInput style={styles.input} value={this.state.owner_contact_number} onChangeText={(owner_contact_number) => this.setState({owner_contact_number})} />
           <Text>Owner Email</Text>
           <TextInput style={styles.input} value={this.state.owner_email} onChangeText={(owner_email) => this.setState({owner_email})} />
         </View>

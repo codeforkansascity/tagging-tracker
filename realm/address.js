@@ -45,4 +45,16 @@ class Address {
     }
 }
 
+Address.PROPERTY_TYPES = [
+  1,
+  2,
+  3,
+];
+
+Address.PROPERTY_TYPE_DISPLAYS = [
+  'Commercial',
+  'Residential',
+  'Public',
+];
+
 export default Address;
