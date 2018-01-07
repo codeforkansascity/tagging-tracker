@@ -85,11 +85,8 @@ export default class TagView extends Component {
   }
 
   deleteTag() {
-    const { tag } = this.props.navigation.state.params;
-    realm.write(() => {
-      realm.delete(tag);
-    });
-
+    const { tag, deleteCurrentTag } = this.props.navigation.state.params;
+    deleteCurrentTag(tag);
     this.props.navigation.dispatch(NavigationActions.back());
   }
 

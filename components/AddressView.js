@@ -78,7 +78,9 @@ export default class AddressView extends Component {
   constructor(props) {
     super(props);
     this.state = {};
+
     this.closeAddressDetailsModal = this.closeAddressDetailsModal.bind(this);
+    this.deleteCurrentTag = this.deleteCurrentTag.bind(this);
   }
 
   componentWillMount() {
@@ -187,7 +189,7 @@ export default class AddressView extends Component {
       return (
         <View style={{padding: 10}}>
           <TouchableHighlight
-            onPress={() => {this.props.navigation.navigate('TagView', {tag})}}
+            onPress={() => {this.props.navigation.navigate('TagView', {tag, deleteCurrentTag: this.deleteCurrentTag})}}
           >
             <Image 
               style={{width: win.width - 20, height: 200}} 
@@ -317,7 +319,7 @@ export default class AddressView extends Component {
 
   renderAddressDetailsIOS(address) {
     return (
-      <View style={{flex: 1, margin: 20}}>
+      <View style={{flex: 1}}>
         <View style={{ flex: 1, backgroundColor: '#ffffff', padding: 10, borderRadius: 2 }}>
           <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 10}}>
             <Text onPress={this.closeAddressDetailsModal}>Close</Text>
@@ -363,7 +365,6 @@ export default class AddressView extends Component {
         marginBottom: 20,
       }
     };
-
 
     const styles = StyleSheet.create(stylesHash);
     let tags = realm.objects('Tag').filtered('address = $0', addressId);
