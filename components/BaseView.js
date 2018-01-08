@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   AppRegistry,
+  ActivityIndicator,
   StyleSheet,
   Text,
   View,
@@ -45,6 +46,7 @@ export default class BaseView extends Component {
       addresses: [],
       queriedAddresses: [],
       isLoading: false,
+      isFetchingAddress: false,
     };
 
     this.login = this.login.bind(this);
@@ -109,7 +111,21 @@ export default class BaseView extends Component {
   }
 
   showAddresses() {
-    navigator.geolocation.getCurrentPosition(this.getAddressCoordinates.bind(this), () => {}, {maximumAge: 2000});
+    this.setState({
+      isFetchingAddress: true,
+    });
+
+    navigator.geolocation.getCurrentPosition(
+      this.getAddressCoordinates.bind(this),
+      (err) => {
+        alert('Address could not be obtained. Please try again.');
+
+        this.setState({
+          isFetchingAddress: false,
+        });
+      },
+      {maximumAge: 2000, timeout: 15000}
+    );
   }
 
   getAddressCoordinates(pos) {
@@ -146,7 +162,13 @@ export default class BaseView extends Component {
       },
       error => {
       }
-    );
+    ).catch(() => {
+      alert('Geo Coordinates could not be obtained. Please try again.')
+    }).finally(() => {
+      this.setState({
+        isFetchingAddress: false,
+      });
+    });
   }
 
   navigateNewAddress() {
@@ -234,16 +256,33 @@ export default class BaseView extends Component {
           tintColor="white"
           barTintColor="black"
           >
-          <TabNavigator.Item
-            title="Add Address"
-            renderIcon={() => <NativeIonicon name="add" size={30}
-            style={{backgroundColor: '#00000000'}}
-            onPress={this.showAddresses.bind(this)}
-             />}
-          />
+          {this.renderAddAddressButton()}
           {this.renderAuthenticationButton()}
         </TabNavigator>
       </View>
+    );
+  }
+
+  renderAddAddressButton() {
+    let renderIcon;
+    let onPress;
+    let title = '';
+
+    if (!this.state.isFetchingAddress) {
+      renderIcon = () => <NativeIonicon name="add" size={28} />;
+      onPress = this.showAddresses.bind(this);
+      title = 'Add Address';
+    } else {
+      renderIcon = () => <ActivityIndicator />;
+      title = 'Loading';
+    }
+
+    return (
+      <TabNavigator.Item
+        title={title}
+        renderIcon={renderIcon}
+        onPress={onPress}
+      />
     );
   }
 

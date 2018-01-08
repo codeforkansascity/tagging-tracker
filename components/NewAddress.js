@@ -16,12 +16,12 @@ import {
 
 import Toast from 'react-native-simple-toast';
 import Geocoder from 'react-native-geocoding';
-import { SegmentedControls } from 'react-native-radio-buttons';
 import { NavigationActions } from 'react-navigation';
 import axios from 'axios';
 import shortid from 'shortid';
 
 import BaseView from './BaseView';
+import NativeSegmentedControls from './common_ui/NativeSegmentedControls';
 import realm from '../realm';
 import store from '../store';
 import networkActions from '../services/network/actions';
@@ -178,21 +178,7 @@ export default class NewAddress extends Component {
   }
 
   renderOption(option, selected, onSelect, index) {
-    const style = {
-      textAlign: 'center',
-    }
-    style.fontWeight = selected ? 'bold' : 'normal';
-    style.color = selected ? '#fff' : '#000';
-    
-    return (
-      <View key={index}>
-        <Text onPress={onSelect} style={style}>{Address.PROPERTY_TYPE_DISPLAYS[option-1]}</Text>
-      </View>
-    );
-  }
- 
-  renderContainer(optionNodes) {
-    return <View>{optionNodes}</View>;
+    return NativeSegmentedControls.renderOption(Address.PROPERTY_TYPE_DISPLAYS[option-1], selected, onSelect, index);
   }
 
   render() {
@@ -209,15 +195,15 @@ export default class NewAddress extends Component {
           <TextInput style={styles.input} value={this.state.neighborhood} onChangeText={(neighborhood) => this.setState({neighborhood})} />
           <Text>ZIP</Text>
           <TextInput style={styles.input} value={this.state.zip} onChangeText={(zip) => this.setState({zip})} />
-          <Text>Property Type</Text>
-          <SegmentedControls
-            options={ Address.PROPERTY_TYPES }
-            onSelection={ this.setSelectedOption.bind(this) }
-            selectedOption={this.state.type_of_property }
-            renderOption={ this.renderOption.bind(this) }
-            renderContainer={ this.renderContainer.bind(this) }
-            selectedTint= {'white'}
-          />
+          <Text>Property Type (Select One)</Text>
+          <View style={{marginTop: Platform.OS == 'android' ? 5 : 10}}>
+            <NativeSegmentedControls
+              options={ Address.PROPERTY_TYPES }
+              onSelection={ this.setSelectedOption.bind(this) }
+              selectedOption={this.state.type_of_property }
+              renderOption={ this.renderOption.bind(this) }
+            />
+          </View>
           <TextInput style={styles.input} value={this.state.property_type} onChangeText={(property_type) => this.setState({property_type})} />
           <Text>Owner Name</Text>
           <TextInput style={styles.input} value={this.state.owner_name} onChangeText={(owner_name) => this.setState({owner_name})} />

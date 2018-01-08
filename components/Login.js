@@ -89,8 +89,8 @@ export default class Login extends Component {
 
   render() {
     return (
-      <View style={{flex: 1}}>
-        <View style={{flex: 1, padding: 20}}>
+      <View style={{flex: 1, padding: 20}}>
+        <View style={{flex: 1}}>
           <Text>Email</Text>
           <TextInput autoCapitalize="none" style={styles.input} value={this.state.email} onChangeText={(email) => this.setState({email})} />
           <Text>Password</Text>
