@@ -300,8 +300,12 @@ export default class AddressView extends Component {
   }
 
   renderAddressDetails(address) {
-    if(address) {
-      return this.renderAddressDetailsIOS(address);
+    if (address) {
+      if (Platform.OS == 'ios') {
+        return this.renderAddressDetailsIOS(address);
+      } else {
+        return this.renderAddressDetailsAndroid(address);
+      }
     } else {
       return <View></View>;
     }
@@ -312,8 +316,8 @@ export default class AddressView extends Component {
       <View style={{flex: 1}}>
         <View style={{ flex: 1, backgroundColor: '#ffffff', padding: 10, borderRadius: 2 }}>
           <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 10}}>
-            <Text onPress={this.closeAddressDetailsModal}>Close</Text>
-            <Text>Edit</Text>
+            <Text style={{fontSize: 20}} onPress={this.closeAddressDetailsModal}>Close</Text>
+            <Text style={{fontSize: 20}}>Edit</Text>
           </View>
           <ScrollView style={{flex: 1}}>
             <Text style={modalContentStyles.title}>Address</Text>
@@ -336,6 +340,37 @@ export default class AddressView extends Component {
         </View>
       </View>
     );
+  }
+
+  renderAddressDetailsAndroid(address) {
+    return (
+      <View style={{flex: 1}}>
+        <View style={{ flex: 1, backgroundColor: '#ffffff', padding: 10}}>
+          <ScrollView style={{flex: 1}}>
+            <Text style={modalContentStyles.title}>Address</Text>
+            <Text style={modalContentStyles.bodyText}>{address.street}</Text>
+            <Text style={modalContentStyles.title}>Neighborhood</Text>
+            <Text style={modalContentStyles.bodyText}>{address.neighborhood}</Text>
+            <Text style={modalContentStyles.title}>City</Text>
+            <Text style={modalContentStyles.bodyText}>{address.city}</Text>
+            <Text style={modalContentStyles.title}>State</Text>
+            <Text style={modalContentStyles.bodyText}>{address.state}</Text>
+            <Text style={modalContentStyles.title}>Property Type</Text>
+            <Text style={modalContentStyles.bodyText}>{Address.PROPERTY_TYPE_DISPLAYS[address.type_of_property - 1]}</Text>
+            <Text style={modalContentStyles.title}>Owner Name</Text>
+            <Text style={modalContentStyles.bodyText}>{address.owner_name}</Text>
+            <Text style={modalContentStyles.title}>Owner Number</Text>
+            <Text style={modalContentStyles.bodyText}>{address.owner_contact_number}</Text>
+            <Text style={modalContentStyles.title}>Owner Email</Text>
+            <Text style={modalContentStyles.bodyText}>{address.owner_email}</Text>
+          </ScrollView>
+          <View style={{paddingTop: 15, paddingLeft: 10, paddingRight: 10, flexDirection: 'row', justifyContent: 'flex-end'}}>
+            <Text style={Object.assign({}, modalContentStyles.bodyText, {color: '#00897B'})} onPress={this.closeAddressDetailsModal}>Close</Text>
+            <Text style={Object.assign({}, modalContentStyles.bodyText, {marginLeft: 20, color: '#00897B'})}>Edit</Text>
+          </View>
+        </View>
+      </View>
+    )
   }
 
   render() {
