@@ -25,6 +25,7 @@ import AddressView from './AddressView';
 import NewAddress from './NewAddress';
 import TagView from './TagView';
 import Login from './Login';
+import Notifications from './Notifications';
 import store from '../store';
 import { getNetworkConnectionStatus } from '../services/network/api';
 import networkActions from '../services/network/actions';
@@ -124,6 +125,7 @@ export default class TaggingTracker extends Component {
         AddressView: { screen: AddressView },
         TagView: { screen: TagView },
         Login: { screen: Login },
+        Notifications: { screen: Notifications },
       }, {
         initialRouteName,
         initialRouteParams,

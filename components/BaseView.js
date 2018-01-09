@@ -256,6 +256,11 @@ export default class BaseView extends Component {
           tintColor="white"
           barTintColor="black"
           >
+          <TabNavigator.Item
+            title="Notifications"
+            renderIcon={() => <NativeIonicon name="notifications" size={28} />}
+            onPress={() => {this.props.navigation.navigate('Notifications')}}
+          />
           {this.renderAddAddressButton()}
           {this.renderAuthenticationButton()}
         </TabNavigator>
