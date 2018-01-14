@@ -18,7 +18,6 @@ import Camera from 'react-native-camera';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { NavigationActions } from 'react-navigation'
 
-import realm from '../realm';
 import BaseView from './BaseView';
 import ItemCardView from './android/ItemCardView';
 import IOSDivider from './ios/Divider';

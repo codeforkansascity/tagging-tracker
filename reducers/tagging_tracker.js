@@ -7,6 +7,11 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch(action.type) {
+    case Actions.UPDATE_IN_QUEUE:
+      return {
+        ...state,
+        queue: replaceTaskInArray(action.originalTask, action.newTask),
+      }
     case Actions.ADD_TO_QUEUE:
       return {
         ...state,
@@ -20,4 +25,14 @@ export default (state = initialState, action) => {
     default:
       return state;
   }
+}
+
+function replaceTaskInArray(array, originalTask, newTask) {
+  return array.map( (item) => {
+    if(item !== originalTask) {
+      return newTask;
+    }
+
+    return originalTask;
+  });
 }

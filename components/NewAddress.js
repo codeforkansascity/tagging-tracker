@@ -137,7 +137,7 @@ export default class NewAddress extends Component {
       address = realm.create('Address', addressParams);
     });
 
-    if(networkSelectors.get().isConnected) {
+    if (networkSelectors.get().isConnected) {
       uploadAddress(address.serviceProperties)
         .then(response => {
           realm.write(() => {
@@ -153,7 +153,7 @@ export default class NewAddress extends Component {
         })
     } else {
       Toast.show('Phone is offline. Data will be uploaded when you have an online connection.')
-      const request = { action: 'UPLOAD', type: 'Address', entity: address.serviceProperties };
+      const request = { action: 'UPLOAD', type: 'Address', entity: address.serviceProperties, address_id: address.id };
       store.dispatch(taggingTrackerActions.addToQueue({ request }));
       this.navigateOnSubmit(address);
     }

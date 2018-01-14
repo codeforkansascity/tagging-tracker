@@ -174,7 +174,7 @@ export default class AddressView extends Component {
           >
             <Image 
               style={{width: win.width - 20, height: 200}} 
-              source={{uri: tag.img}} 
+              source={{uri: tag.local_img || tag.img}}
             />
           </TouchableHighlight>
           <View 
@@ -271,16 +271,16 @@ export default class AddressView extends Component {
           barTintColor="black"
           >
           <TabNavigator.Item
-            title="Add Tag"
-            onPress={this.addTag.bind(this)}
-            renderIcon={() => <NativeIonicon name="camera" size={30} style={{backgroundColor: '#00000000'}} />}
-          />
-          <TabNavigator.Item
             title="Info"
             onPress={() => {this.setState({addressDetailsViewable: true})}}
             renderIcon={
               () => <NativeIonicon name="information-circle" size={24} style={{backgroundColor: '#00000000'}} />
             }
+          />
+          <TabNavigator.Item
+            title="Add Tag"
+            onPress={this.addTag.bind(this)}
+            renderIcon={() => <NativeIonicon name="camera" size={30} style={{backgroundColor: '#00000000'}} />}
           />
           {SessionSelectors.get().tokens.access.value && (
             <TabNavigator.Item

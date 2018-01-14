@@ -20,6 +20,7 @@ import Camera from 'react-native-camera';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Geocoder from 'react-native-geocoding';
 import { NavigationActions } from 'react-navigation';
+import shortid from 'shortid';
 
 import BaseView from './BaseView';
 import realm from '../realm';
@@ -91,7 +92,9 @@ export default class NewTagData extends Component {
       return;
     }
 
+    tagParams.id = shortid.generate();
     tagParams.img = imagePath;
+    tagParams.local_img = imagePath;
     tagParams.creator_user_id = userId;
     tagParams.last_updated_user_id = userId;
     tagParams.address = address.toString();
@@ -117,6 +120,7 @@ export default class NewTagData extends Component {
       .then(uploadTag)
       .then(response => {
         realm.write(() => {
+          let tag = response.data;
           tag.id = response.data.id.toString();
           tag.address = response.data.address.toString();
           tag.uploaded_online = true;
@@ -125,7 +129,15 @@ export default class NewTagData extends Component {
       .then(this.submitDataSuccessNavigation.bind(this));
     } else {
       Toast.show('Phone is Offline. Data will be uploaded when phone is connected.');
-      let request = { action: 'UPLOAD', type: 'Tag', entity: tag.serviceProperties };
+    
+      let request = { 
+        action: 'UPLOAD',
+        type: 'Tag',
+        entity: tag.serviceProperties,
+        local_img: tag.local_img,
+        address_uploaded: address.uploaded_online
+      };
+
       store.dispatch(taggingTrackerActions.addToQueue({ request }));
       this.submitDataSuccessNavigation();
     }

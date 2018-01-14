@@ -99,6 +99,10 @@ export default class TaggingTracker extends Component {
 
   handleConnectionChange(isConnected) {
     store.dispatch(networkActions.connectionState({ status: isConnected }));
+
+    if (isConnected) {
+      uploadSavedTasks();
+    }
   }
 
   render() {
