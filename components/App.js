@@ -57,7 +57,7 @@ export default class TaggingTracker extends Component {
   }
 
   initializeData(isConnected) {
-    store.dispatch(networkActions.connectionState({ status: isConnected }));
+    store.dispatch(networkActions.connectionState({ isConnected }));
 
     this.setState({
       checkingConnection: false,
@@ -98,7 +98,7 @@ export default class TaggingTracker extends Component {
   }
 
   handleConnectionChange(isConnected) {
-    store.dispatch(networkActions.connectionState({ status: isConnected }));
+    store.dispatch(networkActions.connectionState({ isConnected }));
 
     if (isConnected) {
       uploadSavedTasks();

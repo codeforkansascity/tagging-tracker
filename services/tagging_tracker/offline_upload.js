@@ -10,6 +10,7 @@ import * as NotificationActions from '../../actions/notifications';
 
 export const uploadSavedTasks = () => {
   let tasks = store.getState().tagging_tracker.queue;
+  store.dispatch(TaggingTrackerActions.setTaskCompletionCount({count: 0}));
 
   tasks.forEach(task => {
     if(task) {
@@ -30,7 +31,10 @@ export const uploadSavedTasks = () => {
           .catch((error) => {
             const message = `${task.entity.street} did not upload.`;
             store.dispatch(NotificationActions.addNotification({notification: {type: Notification.AlertTypes.ERROR, message}}));
-          });
+          })
+          .finally(() => {
+            store.dispatch(TaggingTrackerActions.incrementTaskCompletionCount());
+          })
           
       } else if (task.action === 'UPLOAD' && task.type === 'Tag' && task.address_uploaded) {
         uploadOfflineTagImageCheck(task)
@@ -112,12 +116,16 @@ const uploadOfflineTag = (task, imageExists) => {
       .catch((error) => {
         const message = `${tag.description} did not upload. ${error}`;
         store.dispatch(NotificationActions.addNotification({notification: {type: Notification.AlertTypes.ERROR, message}}));
+      })
+      .finally(() => {
+        store.dispatch(TaggingTrackerActions.incrementTaskCompletionCount());
       });
   } else {
     return new Promise((resolve, reject) => {
       store.dispatch(TaggingTrackerActions.removeFromQueue({request: task}));
       const message = `${tag.description} does not have an image and cannot be uploaded.`;
       store.dispatch(NotificationActions.addNotification({notification: {type: Notification.AlertTypes.ERROR, message}}));
+      store.dispatch(TaggingTrackerActions.incrementTaskCompletionCount());
       resolve(tag);
     });
   }

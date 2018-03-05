@@ -15,3 +15,16 @@ module.exports.addToQueue = ({ request }) => ({
   type: Actions.ADD_TO_QUEUE,
   request,
 });
+
+module.exports.setTaskCompletionCount = ({ count }) => ({
+  type: Actions.SET_TASK_COMPLETION_COUNT,
+  count,
+});
+
+module.exports.incrementTaskCompletionCount = () => ({
+  type: Actions.INCREMENT_TASK_COMPLETION_COUNT,
+});
+
+module.exports.decrementTaskCompletionCount = () => ({
+  type: Actions.DECREMENT_TASK_COMPLETION_COUNT,
+});

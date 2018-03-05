@@ -3,7 +3,6 @@ import _ from 'lodash';
 
 const initialState = {
   isConnected: false,
-  queue: [],
 };
 
 export default (state = initialState, action) => {

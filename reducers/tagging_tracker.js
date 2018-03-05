@@ -3,10 +3,26 @@ import _ from 'lodash';
 
 const initialState = {
   queue: [],
+  taskCompletedCount: 0,
 };
 
 export default (state = initialState, action) => {
   switch(action.type) {
+    case Actions.SET_TASK_COMPLETION_COUNT:
+      return {
+        ...state,
+        taskCompletedCount: action.count,
+      }
+    case Actions.INCREMENT_TASK_COMPLETION_COUNT:
+      return {
+        ...state,
+        taskCompletedCount: state.taskCompletedCount + 1,
+      }
+    case Actions.DECREMENT_TASK_COMPLETION_COUNT:
+      return {
+        ...state,
+        taskCompletedCount: state.taskCompletedCount - 1,
+      }
     case Actions.UPDATE_IN_QUEUE:
       return {
         ...state,

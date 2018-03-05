@@ -17,6 +17,7 @@ import Toast from 'react-native-simple-toast';
 import axios from 'axios';
 import TabNavigator from 'react-native-tab-navigator';
 import { DialogComponent, DialogTitle, DialogContent, DialogButton } from 'react-native-dialog-component';
+import { connect } from 'react-redux';
 import Geocoder from 'react-native-geocoding';
 import { NavigationActions } from 'react-navigation';
 import Config from 'react-native-config';
@@ -30,7 +31,7 @@ import * as NetworkSelectors from '../services/network/selectors';
 import * as SessionSelectors from '../services/session/selectors';
 import * as SessionMethods from '../services/session/';
 
-export default class BaseView extends Component {
+class BaseView extends Component {
   static navigationOptions = {
     title: 'Neighborhoods',
   };
@@ -191,6 +192,7 @@ export default class BaseView extends Component {
     };
 
     const { navigate } = this.props.navigation;
+    const notificationCount = this.props.notificationCount > 0 ? this.props.notificationCount.toString() : "";
 
     return(
       <View style={{flex: 1, marginTop: 0}}>
@@ -258,7 +260,8 @@ export default class BaseView extends Component {
           >
           <TabNavigator.Item
             title="Notifications"
-            renderIcon={() => <NativeIonicon name="notifications" size={28} />}
+            badgeText={notificationCount}
+            renderIcon={() => <NativeIonicon name="notifications" size={22} />}
             onPress={() => {this.props.navigation.navigate('Notifications')}}
           />
           {this.renderAddAddressButton()}
@@ -327,3 +330,11 @@ const styles = StyleSheet.create({
     borderTopColor: '#dddddd'
   },
 });
+
+const mapStateToProps = (state) => ({
+  notificationCount: state.notifications.notifications.length
+});
+
+export default connect(
+  mapStateToProps,
+)(BaseView);
