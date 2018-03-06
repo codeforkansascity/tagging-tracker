@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   Alert,
+  Animated,
   AppRegistry,
   StyleSheet,
   Text,
@@ -49,7 +50,7 @@ export default class TagView extends Component {
     if(Platform.OS === 'ios') {
       options.headerStyle = {
         position: 'absolute',
-        backgroundColor: 'transparent',
+        backgroundColor: !navigation.state.params? 'transparent' : navigation.state.params.bgColor,
         borderBottomColor: 'transparent',
         zIndex: 100,
         top: 0,
@@ -67,8 +68,21 @@ export default class TagView extends Component {
     return options;
   };
 
+  constructor(props) {
+    super(props);
+    this.scrollY = new Animated.Value(0);
+  }
+
   componentWillMount() {
-    this.props.navigation.setParams({ deleteTagPrompt: this.deleteTagPrompt.bind(this), ...this.props.navigation.params });
+    this.props.navigation.setParams({
+      deleteTagPrompt: this.deleteTagPrompt.bind(this),
+      bgColor: this.scrollY.interpolate({
+        inputRange: [0, win.height / 2 - 40],
+        outputRange: ['transparent', 'rgb(0, 0,0)'],
+        extrapolate: 'clamp',
+      }),
+      ...this.props.navigation.params,
+    });
   }
 
   deleteTagPrompt() {
@@ -119,7 +133,14 @@ export default class TagView extends Component {
     const styles = StyleSheet.create(stylesHash);
 
     return (
-      <ScrollView style={{flex: 1}}>
+      <ScrollView
+        bounces={false}
+        style={{flex: 1}}
+        onScroll={Animated.event([
+          { nativeEvent: { contentOffset: { y: this.scrollY } } },
+        ])}
+        scrollEventThrottle={16}
+      >
         {imageView}
         <View style={{padding: 20 }}>
           {Platform.OS === 'ios' && <Text style={styles.mainTitle}>{tag.description}</Text>}
