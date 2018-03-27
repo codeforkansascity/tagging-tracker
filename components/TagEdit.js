@@ -71,7 +71,7 @@ export default class TagEdit extends Component {
       square_footage: this.props.tag.square_footage,
       neighborhood: this.props.tag.neighborhood,
       tag_words: this.props.tag.tag_words,
-      img: this.props.tag.img
+      img: this.props.tag.img,
     });
   }
 
@@ -81,7 +81,6 @@ export default class TagEdit extends Component {
 
   saveForm() {
     const userId = store.getState().session.user.id;
-    alert(userId);
 
     // let tag;
     // let { address } = this.props.navigation.state.params;
@@ -207,11 +206,11 @@ export default class TagEdit extends Component {
 
             {Platform.OS === 'ios' && <IOSDivider></IOSDivider>}
             <Text>Short Description</Text>
-            <TextInput style={styles.input} value={this.state.tag.description} onChangeText={(description) => this.setState({description})} />
+            <TextInput style={styles.input} value={this.state.description} onChangeText={(description) => this.setState({description})} />
             <Text>Square Footage</Text>
-            <TextInput style={styles.input} value={this.state.tag.square_footage} onChangeText={(square_footage) => this.setState({square_footage})} />
+            <TextInput style={styles.input} value={this.state.square_footage} onChangeText={(square_footage) => this.setState({square_footage})} />
             <Text>Neighborhood</Text>
-            <TextInput style={styles.input} value={this.state.tag.neighborhood} onChangeText={(neighborhood) => this.setState({neighborhood})} />
+            <TextInput style={styles.input} value={this.state.neighborhood} onChangeText={(neighborhood) => this.setState({neighborhood})} />
             <Text>Describe the words of this Tag</Text>
             <TextInput multiline={true} style={styles.input} value={this.state.tag_words} onChangeText={(tag_words) => this.setState({tag_words})} />
 
