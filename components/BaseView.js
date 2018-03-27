@@ -217,12 +217,12 @@ class BaseView extends Component {
                           }}
                       >
                         <View>
-                          <Text 
-                            key={item.id} 
+                          <Text
+                            key={item.id}
                             style={styles.listItem}
                           >
                             {item.street}
-                          </Text> 
+                          </Text>
                         </View>
                       </TouchableHighlight>
                     )

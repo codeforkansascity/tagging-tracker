@@ -24,6 +24,7 @@ import AddressList from './AddressList';
 import AddressView from './AddressView';
 import NewAddress from './NewAddress';
 import TagView from './TagView';
+import TagEdit from './TagEdit';
 import Login from './Login';
 import Notifications from './Notifications';
 import store from '../store';
@@ -128,6 +129,7 @@ export default class TaggingTracker extends Component {
         AddressList: { screen: AddressList },
         AddressView: { screen: AddressView },
         TagView: { screen: TagView },
+        TagEdit: { screen: TagEdit },
         Login: { screen: Login },
         Notifications: { screen: Notifications },
       }, {

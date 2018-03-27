@@ -165,19 +165,19 @@ export default class AddressView extends Component {
 
   renderTagComponent(tag) {
     if(this.state.deletingTag == tag.id) {
-      return (<ActivityIndicator style={{padding: 20}}/>);
+      return (<ActivityIndicator style={{padding: 20}} key={tag.id}/>);
     } else {
       return (
-        <View style={{padding: 10}}>
+        <View style={{padding: 10}} key={tag.id}>
           <TouchableHighlight
             onPress={() => {this.props.navigation.navigate('TagView', {tag, deleteCurrentTag: this.deleteCurrentTag})}}
           >
-            <Image 
-              style={{width: win.width - 20, height: 200}} 
+            <Image
+              style={{width: win.width - 20, height: 200}}
               source={{uri: tag.local_img || tag.img}}
             />
           </TouchableHighlight>
-          <View 
+          <View
             style={{
               flex: 1,
               flexDirection: 'row',
@@ -185,7 +185,7 @@ export default class AddressView extends Component {
             }}
           >
             <Text style={{
-              flex: 1, 
+              flex: 1,
               justifyContent: 'center',
               marginTop: 5}}
             >
@@ -402,11 +402,11 @@ export default class AddressView extends Component {
         </View>
       );
     }
-    
+
     if (tags.length == 0) {
       return this.renderNoTagSection();
     }
-    
+
     return this.renderTagsSection(tags);
   }
 }
