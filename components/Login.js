@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   Alert,
   AppRegistry,
@@ -57,6 +58,18 @@ export default class Login extends Component {
   }
 
   submitForm() {
+    if (!this.state.email || !this.state.password) {
+      Alert.alert(
+        'Please enter your email and password to login.',
+        null,
+        [
+          {text: 'OK', style: 'cancel'}
+        ],
+        { cancelable: true }
+      );
+      return;
+    }
+
     authenticate(this.state.email, this.state.password)
       .then(this.navigateHome)
       .catch(response => {
@@ -92,9 +105,9 @@ export default class Login extends Component {
       <View style={{flex: 1, padding: 20}}>
         <View style={{flex: 1}}>
           <Text>Email</Text>
-          <TextInput autoCapitalize="none" style={styles.input} value={this.state.email} onChangeText={(email) => this.setState({email})} />
+          <TextInput autoCapitalize="none" autoCorrect={false} style={styles.input} value={this.state.email} onChangeText={(email) => this.setState({email})} />
           <Text>Password</Text>
-          <TextInput secureTextEntry style={styles.input} value={this.state.password} onChangeText={(password) => this.setState({password})} />
+          <TextInput secureTextEntry autoCorrect={false} style={styles.input} value={this.state.password} onChangeText={(password) => this.setState({password})} />
           <Button title="Login" onPress={this.submitForm} />
         </View>
         <View style={{marginBottom: 10}}>
