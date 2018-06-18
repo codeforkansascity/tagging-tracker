@@ -29,12 +29,17 @@ CRT members posing in front a mural at 35th and Prospect. In the photo: neighbor
 * Jake LaCombe
 * Aaron McRuer
 * Kol Kheang
-* Fred Lawl
+* Fred Lawler
 
 Code for KC Slack Channel: #taggingtracker
 
 
-## Developers Notes
+## Technical Project Info
+
+### Dependencies
+
+- Related backend project: [tagging_tracker_backend](https://github.com/codeforkansascity/tagging_tracker_backend)
+- Auth0 service: [App Authentication](https://auth0.com/)
 
 ### Pre-requisites Tools
 
@@ -52,20 +57,17 @@ AUTH0_DOMAIN - FQDN of the auth0 authentication engine
 TAGGING_TRACKER_SERVICE_DOMAIN - http://localhost/ when working locally or change remote host and port otherwise
 ```
 
-When connecting to Azure cloud, the following environment variables are required:
+Contact one of the project owners to get a pre-populated `dev.env` file with all the environment variables. You can also register a new account @ auth0.com.
+
+### Prod Environment Config
+
+When connecting to [Azure](https://portal.azure.com) cloud prod instance, the following environment variables are required:
 
 ```
 AZURE_CONTAINER_KEY - Azure container key ID
 AZURE_IMAGE_CONTAINER_NAME - Azure image container name
 AZURE_IMAGE_CONTAINER_KEY - Azzure image container key
 ```
-
-Contact one of the project owners to get a pre-populated `dev.env` file with all the environment variables. You can also register a new account @ auth0.com.
-
-### Dependencies
-
-- Related backend project: [tagging_tracker_backend](https://github.com/codeforkansascity/tagging_tracker_backend)
-- Auth0 service: [App Authentication](https://auth0.com/)
 
 ### Getting Started Locally
 
@@ -79,3 +81,7 @@ npm run local-ios
 ```
 
 Ensure that Tagging Tracker Backend service are up and running locally before running the application.
+
+### Contribution
+
+Read the [Contribution Guide](documentation/contribution.md)
