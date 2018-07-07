@@ -19,7 +19,10 @@ import Toast from 'react-native-simple-toast';
 import Camera from 'react-native-camera';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Geocoder from 'react-native-geocoding';
-import { NavigationActions } from 'react-navigation';
+import { 
+  NavigationActions,
+  StackActions
+ } from 'react-navigation';
 import shortid from 'shortid';
 
 import BaseView from './BaseView';
@@ -146,7 +149,7 @@ export default class NewTagData extends Component {
   submitDataSuccessNavigation() {
     const { address, neighborhood } = this.props.navigation.state.params;
 
-    const addressViewReRoute = NavigationActions.reset({
+    const addressViewReRoute = StackActions.reset({
       index: 2,
       actions: [
         NavigationActions.navigate({ routeName: 'Home', params: { initializingApp: false }}),

@@ -19,6 +19,7 @@ import {
 import Modal from 'react-native-modal';
 import TabNavigator from 'react-native-tab-navigator';
 import { NavigationActions } from 'react-navigation';
+import { StackActions } from 'react-navigation';
 
 import realm from '../realm';
 import Address from '../realm/address';
@@ -109,7 +110,7 @@ export default class AddressView extends Component {
           realm.delete(realm.objects('Address').filtered('id = $0', address.id));
         });
 
-        const addressListing = NavigationActions.reset({
+        const addressListing = StackActions.reset({
           index: 1,
           actions: [
             NavigationActions.navigate({ routeName: 'Home'}),

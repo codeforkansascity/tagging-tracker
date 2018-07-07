@@ -14,7 +14,10 @@ import {
 } from 'react-native';
 
 import { Provider } from 'react-redux';
-import { StackNavigator } from 'react-navigation';
+import { 
+  StackNavigator,
+  createStackNavigator
+ } from 'react-navigation';
 import Toast from 'react-native-simple-toast';
 
 import BaseView from './BaseView';
@@ -121,7 +124,7 @@ export default class TaggingTracker extends Component {
         Toast.showWithGravity('Device Offline. You will not be able to upload data to servers.', Toast.SHORT, Toast.BOTTOM)
       }
 
-      const StackNavigation = StackNavigator({
+      const StackNavigation = createStackNavigator({
         Home: { screen: BaseView },
         TagPhoto: { screen: TagPhoto },
         NewTagData: { screen: NewTagData },

@@ -19,7 +19,10 @@ import Toast from 'react-native-simple-toast';
 import Camera from 'react-native-camera';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Geocoder from 'react-native-geocoding';
-import { NavigationActions } from 'react-navigation'
+import { 
+  NavigationActions,
+  StackActions
+ } from 'react-navigation';
 
 import BaseView from './BaseView';
 import realm from '../realm';
@@ -90,7 +93,7 @@ export default class Login extends Component {
   }
 
   navigateHome() {
-    const resetAction = NavigationActions.reset({
+    const resetAction = StackActions.reset({
       index: 0,
       actions: [
         NavigationActions.navigate({ routeName: 'Home', params: { initializingApp: true }})

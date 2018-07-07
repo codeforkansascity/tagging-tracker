@@ -19,7 +19,10 @@ import TabNavigator from 'react-native-tab-navigator';
 import { DialogComponent, DialogTitle, DialogContent, DialogButton } from 'react-native-dialog-component';
 import { connect } from 'react-redux';
 import Geocoder from 'react-native-geocoding';
-import { NavigationActions } from 'react-navigation';
+import { 
+  NavigationActions,
+  StackActions
+ } from 'react-navigation';
 import Config from 'react-native-config';
 import shortid from 'shortid';
 
@@ -173,7 +176,7 @@ class BaseView extends Component {
   }
 
   navigateNewAddress() {
-    const resetAction = NavigationActions.reset({
+    const resetAction = StackActions.reset({
       index: 1,
       actions: [
         NavigationActions.navigate({ routeName: 'Home'}),

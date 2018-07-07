@@ -19,7 +19,11 @@ import Toast from 'react-native-simple-toast';
 import Camera from 'react-native-camera';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Geocoder from 'react-native-geocoding';
-import { NavigationActions } from 'react-navigation';
+import { 
+  NavigationActions,
+  StackActions
+ } from 'react-navigation';
+
 import shortid from 'shortid';
 
 import BaseView from './BaseView';
@@ -52,6 +56,7 @@ export default class TagEdit extends Component {
   constructor(props) {
     super(props);
     this.closeTagEditModal = this.closeTagEditModal.bind(this);
+    this.saveForm = this.saveForm.bind(this);
 
     this.state = {
       tag: null,
@@ -81,6 +86,16 @@ export default class TagEdit extends Component {
 
   saveForm() {
     const userId = store.getState().session.user.id;
+
+    const tag = this.state.tag;
+    tag.description = this.state.description;
+    tag.square_footage = this.state.square_footage;
+    tag.neighborhood = this.state.neighborhood;
+    tag.tag_words = this.state.tag_words;
+    tag.img = this.state.img;
+
+    // alert(tag.toString());
+
 
     // let tag;
     // let { address } = this.props.navigation.state.params;
@@ -149,7 +164,7 @@ export default class TagEdit extends Component {
   submitDataSuccessNavigation() {
     const { address, neighborhood } = this.props.navigation.state.params;
 
-    const addressViewReRoute = NavigationActions.reset({
+    const addressViewReRoute = StackActions.reset({
       index: 2,
       actions: [
         NavigationActions.navigate({ routeName: 'Home', params: { initializingApp: false }}),

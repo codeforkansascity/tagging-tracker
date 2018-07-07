@@ -21,7 +21,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
 import shortid from 'shortid';
 import TabNavigator from 'react-native-tab-navigator';
-import { NavigationActions } from 'react-navigation';
+import { 
+  NavigationActions,
+  StackActions
+ } from 'react-navigation';
 import Toast from 'react-native-simple-toast';
 
 import realm from '../realm';
@@ -84,7 +87,7 @@ class Notifications extends Component {
 
     uploadSavedTasks();
     Toast.show("Uploading Data. Check Back Later to see it's status.");
-      const resetAction = NavigationActions.reset({
+      const resetAction = StackActions.reset({
       index: 0,
       actions: [
         NavigationActions.navigate({ routeName: 'Home' })

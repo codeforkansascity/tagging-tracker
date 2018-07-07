@@ -16,7 +16,10 @@ import {
 
 import Toast from 'react-native-simple-toast';
 import Geocoder from 'react-native-geocoding';
-import { NavigationActions } from 'react-navigation';
+import { 
+  NavigationActions,
+  StackActions
+ } from 'react-navigation';
 import axios from 'axios';
 import shortid from 'shortid';
 
@@ -160,7 +163,7 @@ export default class NewAddress extends Component {
   }
 
   navigateOnSubmit(address) {
-    const resetAction = NavigationActions.reset({
+    const resetAction = StackActions.reset({
       index: 1,
       actions: [
         NavigationActions.navigate({ routeName: 'Home' }),
