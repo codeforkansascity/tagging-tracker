@@ -18,8 +18,10 @@ import {
 
 import Modal from 'react-native-modal';
 import TabNavigator from 'react-native-tab-navigator';
-import { NavigationActions } from 'react-navigation';
-import { StackActions } from 'react-navigation';
+import { 
+  NavigationActions,
+  StackActions
+ } from 'react-navigation';
 
 import realm from '../realm';
 import Address from '../realm/address';
@@ -119,6 +121,9 @@ export default class AddressView extends Component {
         })
 
         this.props.navigation.dispatch(addressListing);
+        /*
+         * TODO: If no address in the listing, navigate to the home screen.
+         */
       });
   }
 

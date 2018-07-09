@@ -47,7 +47,8 @@ export const fetchTags = () => (
 );
 
 export const deleteAddress = (addressId) => {
-  axios.delete(`${Config.TAGGING_TRACKER_SERVICE_DOMAIN}/address/${addressId}/`,
+  console.log('Address ID: ' + addressId);
+  return axios.delete(`${Config.TAGGING_TRACKER_SERVICE_DOMAIN}/address/${addressId}/`,
     {
       headers: {'Authorization': `JWT ${store.getState().session.tokens.access.value}`},
     }
