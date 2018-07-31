@@ -39,6 +39,7 @@ export default class Login extends Component {
       const buttonColor = Platform.OS === 'ios' ? '#ffffff' : '#000000'
       return {
         headerTitle: 'Sign In to Continue',
+        headerLeft: null,
       };
     }
   };
