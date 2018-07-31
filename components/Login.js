@@ -52,7 +52,6 @@ export default class Login extends Component {
     };
 
     this.submitForm = this.submitForm.bind(this);
-    this.skipLogin = this.skipLogin.bind(this);
     this.navigateHome = this.navigateHome.bind(this);
   }
 
@@ -80,18 +79,6 @@ export default class Login extends Component {
       });
   }
 
-  skipLogin() {
-    Alert.alert(
-      'Data cannot be updated unless you are logged in',
-      null,
-      [
-        {text: 'Login', style: 'cancel'},
-        {text: 'Continue', onPress: this.navigateHome},
-      ],
-      { cancelable: false }
-    );
-  }
-
   navigateHome() {
     const resetAction = StackActions.reset({
       index: 0,
@@ -112,9 +99,6 @@ export default class Login extends Component {
           <Text>Password</Text>
           <TextInput secureTextEntry autoCorrect={false} style={styles.input} value={this.state.password} onChangeText={(password) => this.setState({password})} />
           <Button title="Login" onPress={this.submitForm} />
-        </View>
-        <View style={{marginBottom: 10}}>
-          <Button title="Skip" onPress={this.skipLogin} />
         </View>
       </View>
     );
