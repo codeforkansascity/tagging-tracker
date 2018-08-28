@@ -67,13 +67,10 @@ export default class TagView extends Component {
 
     if (Platform.OS === 'ios') {
       options.headerStyle = {
-        position: 'absolute',
-        backgroundColor: !navigation.state.params? 'transparent' : navigation.state.params.bgColor,
+        headerTransparent: true,
+        backgroundColor: '#000000',
         borderBottomColor: 'transparent',
         zIndex: 100,
-        top: 0,
-        left: 0,
-        right: 0
       };
 
       options.headerTitleStyle = {
